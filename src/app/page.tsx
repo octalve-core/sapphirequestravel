@@ -5,5 +5,5 @@ import { DestinationShowcase } from "@/features/home/sections/destination-showca
 import { Experience } from "@/features/home/sections/experience";
 import { Trust } from "@/features/home/sections/trust";
 import { FinalCTA } from "@/features/home/sections/final-cta";
-import { QuickSearch } from "@/features/booking/components/quick-search";
-export default function Home(){return <MarketingLayout><Hero/><div className="relative z-10 -mt-9 sm:-mt-16"><QuickSearch/></div><ServiceOverview/><DestinationShowcase/><Experience/><Trust/><FinalCTA/></MarketingLayout>}
+import { BookingPanel } from "@/features/home/sections/booking-panel";
+export default function Home(){return <MarketingLayout><Hero/><BookingPanel/><ServiceOverview/><DestinationShowcase/><Experience/><Trust/><FinalCTA/></MarketingLayout>}
