@@ -11,7 +11,7 @@ test('strict TypeScript and Tailwind 4 configured',()=>{
 });
 test('payment and booking not falsely enabled',()=>{
  assert.ok(read('src/server/flight-provider.ts').includes('return null'));
- assert.match(read('src/features/booking/components/request-form.tsx'),/not a confirmed reservation or ticket/);
+ assert.match(read('src/features/booking/components/enquiry-wizard.tsx'),/not a confirmed booking/);
 });
 test('enquiry flow validates and persists to Neon',()=>{
  assert.match(read('src/server/enquiry-schema.ts'),/superRefine/);
