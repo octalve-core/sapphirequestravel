@@ -14,14 +14,14 @@ const tabs = [
   { key: "corporate" as const, label: "Corporate travel", icon: BriefcaseBusiness },
 ];
 export type EnquiryInitial = { service?: Service; from?: string; to?: string; departure?: string; returnDate?: string; passengers?: number; packageSlug?: string };
-const dateToday = () => new Date().toLocaleDateString("en-CA");
+const dateToday = () => { const today=new Date();return `${today.getFullYear()}-${String(today.getMonth()+1).padStart(2,"0")}-${String(today.getDate()).padStart(2,"0")}`; };
 export function EnquiryWizard({ initial = {}, embedded = false }: { initial?: EnquiryInitial; embedded?: boolean }) {
   const router = useRouter();
   const [service, setService] = useState<Service>(initial.service || "flight");
   const [step, setStep] = useState<1 | 2>(1);
   const [trip, setTrip] = useState<Trip>(initial.returnDate ? "return" : "one-way");
   const [form, setForm] = useState({
-    origin: initial.from || "ABV", destination: initial.to || "LHR", departureDate: initial.departure || "",
+    origin: initial.from || "", destination: initial.to || "", departureDate: initial.departure || "",
     returnDate: initial.returnDate || "", travellers: initial.passengers || 1,
     name: "", email: "", phone: "", notes: initial.packageSlug ? `Enquiry about package: ${initial.packageSlug}` : "", website: "",
   });

@@ -8,7 +8,7 @@ const details = z.object({ blocks: z.array(block).max(70) }).superRefine((x, ctx
 const image = z.string().trim().max(600).refine(value => {
   if (!value) return true;
   if (value.startsWith("/images/") || value.startsWith("/branding/")) return /^[a-zA-Z0-9/_-]+\.(png|webp|jpg|jpeg)$/.test(value);
-  try { const url=new URL(value);return url.protocol==="https:" || url.protocol==="http:"; } catch {return false;}
+  try { const url=new URL(value);return url.protocol==="https:" && Boolean(url.hostname); } catch {return false;}
 }, "Image must be a valid https URL or site image");
 export const packageSchema=z.object({
   title:z.string().trim().min(4).max(120),
@@ -25,6 +25,7 @@ export const packageSchema=z.object({
   details,
 }).superRefine((x,ctx)=>{
   if(x.status==="published" && x.summary.length<20)ctx.addIssue({code:"custom",message:"Published packages need a meaningful short summary"});
+  if(x.priceAmount===null && x.discountPercent>0)ctx.addIssue({code:"custom",message:"Add a base price before applying a discount",path:["discountPercent"]});
 });
 export type PackageInput = z.infer<typeof packageSchema>;
 export type PackageRecord = PackageInput & {id:string};

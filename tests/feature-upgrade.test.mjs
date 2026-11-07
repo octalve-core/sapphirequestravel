@@ -39,3 +39,27 @@ test('all styling changes preserve pnpm usage', () => {
  assert.ok(existsSync(new URL('../pnpm-lock.yaml', import.meta.url)));
  assert.match(read('package.json'),/pnpm@10/);
 });
+
+test('page-specific sections keep destinations and services independent from home', () => {
+ assert.match(read('src/app/services/page.tsx'),/features\/services\/sections\/service-catalog/);
+ assert.match(read('src/app/destinations/page.tsx'),/features\/destinations\/sections\/destination-directory/);
+ assert.match(read('src/app/packages/\[slug\]/page.tsx'),/PackagePublicPage/);
+ assert.match(read('src/components/layout/page-hero.tsx'),/bg-black\/60/);
+});
+test('package editor safely resets after creation and rejects insecure image links', () => {
+ const editor=read('src/features/admin/components/package-fields.tsx');
+ const schema=read('src/server/package-schema.ts');
+ const media=read('src/features/admin/components/package-media.tsx');
+ assert.match(editor,/setEditorReset/);
+ assert.match(editor,/key=\{editorReset\}/);
+ assert.match(schema,/url\.protocol==="https:"/);
+ assert.match(media,/u\.protocol!=="https:"/);
+});
+test('airport picker supports keyboard selection and does not preselect a journey', () => {
+ const picker=read('src/features/booking/components/airport-combobox.tsx');
+ const wizard=read('src/features/booking/components/enquiry-wizard.tsx');
+ assert.match(picker,/ArrowDown/);
+ assert.match(picker,/aria-activedescendant/);
+ assert.match(wizard,/origin: initial\.from \|\| ""/);
+ assert.match(wizard,/destination: initial\.to \|\| ""/);
+});

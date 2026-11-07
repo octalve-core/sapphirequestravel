@@ -6,8 +6,8 @@ import { ImagePlus, Link2, LoaderCircle, X } from "lucide-react";
 type ImageKitAuth={token:string;expire:number;signature:string;publicKey:string;error?:string};
 export function PackageMedia({images,onChange}:{images:string[];onChange:(images:string[])=>void}){
  const [url,setUrl]=useState("");const [busy,setBusy]=useState(false);const [error,setError]=useState("");const input=useRef<HTMLInputElement>(null);
- function addUrl(){setError("");if(images.length>=5){setError("A maximum of five images is allowed.");return}try{const u=new URL(url);if(!["http:","https:"].includes(u.protocol))throw Error();onChange([...images,url.trim()]);setUrl("")}catch{setError("Enter a valid https image URL.")}}
- async function upload(file:File){setError("");if(images.length>=5){setError("A maximum of five images is allowed.");return}if(!["image/jpeg","image/png","image/webp"].includes(file.type)||file.size>5*1024*1024){setError("Use JPG, PNG or WEBP files under 5 MB.");return}
+ function addUrl(){setError("");if(images.length>=5){setError("A maximum of five images is allowed.");return}try{const u=new URL(url);if(u.protocol!=="https:"||!u.hostname)throw Error();if(images.includes(url.trim())){setError("This photo is already included.");return}onChange([...images,url.trim()]);setUrl("")}catch{setError("Enter a valid https image URL.")}}
+ async function upload(file:File){setError("");if(images.length>=5){setError("A maximum of five images is allowed.");return}if(!["image/jpeg","image/png","image/webp"].includes(file.type)||!file.size||file.size>5*1024*1024){setError("Use JPG, PNG or WEBP files under 5 MB.");return}
   setBusy(true);try{
    const r=await fetch("/api/admin/media/auth",{cache:"no-store"});const auth:ImageKitAuth=await r.json();if(!r.ok)throw new Error(auth.error || "Image authentication unavailable");
    const body=new FormData();body.append("file",file);body.append("fileName",file.name);body.append("publicKey",auth.publicKey);body.append("token",auth.token);body.append("expire",String(auth.expire));body.append("signature",auth.signature);body.append("folder","/sapphirequest/packages");body.append("useUniqueFileName","true");

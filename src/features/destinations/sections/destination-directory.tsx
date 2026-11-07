@@ -1,0 +1,7 @@
+import Image from "next/image";
+import Link from "next/link";
+import { ArrowUpRight, MapPin } from "lucide-react";
+import { destinations } from "@/data/destinations";
+
+/** Dedicated destinations page section. The homepage showcase is an independent feature. */
+export function DestinationDirectory() { return <section className="section-space bg-cloud"><div className="container-wide"><div className="max-w-2xl"><p className="eyebrow">Places to explore</p><h2 className="display-heading mt-4 text-3xl sm:text-4xl">Make room for new perspectives.</h2><p className="mt-5 text-sm leading-7 text-muted">These destinations are ideas for your next enquiry, not fixed travel inventory. Tell us where you hope to go and our team can help plan the next step.</p></div><div className="mt-11 grid gap-5 md:grid-cols-2">{destinations.map(d=><Link href={d.href} key={d.name} className="group overflow-hidden rounded-3xl border border-[#e5edf8] bg-white"><div className="relative aspect-[16/9] overflow-hidden bg-navy"><Image src={d.image} alt={`${d.name} travel destination`} fill sizes="(max-width:768px) 100vw, 50vw" className="object-cover transition-transform duration-500 group-hover:scale-105"/><div className="absolute inset-0 bg-black/25"/></div><div className="flex items-center justify-between gap-4 p-6"><div><p className="flex items-center gap-2 text-xs text-muted"><MapPin size={13}/>{d.country}</p><h3 className="mt-2 text-xl font-medium text-navy">{d.name}</h3></div><ArrowUpRight size={20} className="text-sapphire"/></div></Link>)}</div></div></section> }
