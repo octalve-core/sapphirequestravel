@@ -17,12 +17,8 @@ jobs:
       - uses: actions/setup-node@v4
         with:
           node-version: '22'
-      - run: pnpm install --no-frozen-lockfile
-      - name: Capture pnpm lockfile for review
-        run: |
-          printf 'SQ_LOCK_BEGIN\n'
-          base64 -w 0 pnpm-lock.yaml
-          printf '\nSQ_LOCK_END\n'
+          cache: pnpm
+      - run: pnpm install --frozen-lockfile
       - run: pnpm run typecheck
       - run: pnpm run lint
       - run: pnpm test
