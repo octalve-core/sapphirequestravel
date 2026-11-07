@@ -9,12 +9,12 @@ import { Button } from "@/components/ui/button";
 export function slugify(value:string){return value.toLowerCase().normalize("NFKD").replace(/[\u0300-\u036f]/g,"").replace(/[^a-z0-9]+/g,"-").replace(/^-|-$/g,"").slice(0,130)}
 export function PackageFields({initial,id,onSaved}:{initial?:PackageInput;id?:string;onSaved?:()=>void}){
  const router=useRouter();const [form,setForm]=useState<PackageInput>(initial||emptyPackage());const [slugEdited,setSlugEdited]=useState(Boolean(id));
- const [busy,setBusy]=useState(false);const [message,setMessage]=useState("");
+ const [busy,setBusy]=useState(false);const [message,setMessage]=useState("");const [editorReset,setEditorReset]=useState(0);
  const update=<K extends keyof PackageInput>(k:K,value:PackageInput[K])=>setForm(p=>({...p,[k]:value}));
  async function save(e:FormEvent){e.preventDefault();setBusy(true);setMessage("");try{
   const r=await fetch(id?`/api/admin/packages/${id}`:"/api/admin/packages",{method:id?"PATCH":"POST",headers:{"Content-Type":"application/json"},body:JSON.stringify(form)});
   const data:{error?:string,ok?:boolean}=await r.json();if(!r.ok||!data.ok){setMessage(data.error||"Unable to save. Check the fields and database migration.");return}
-  setMessage(id?"Package updated":"Draft package created");if(!id){setForm(emptyPackage());setSlugEdited(false)}onSaved?.();router.refresh();
+  setMessage(id?"Package updated":"Draft package created");if(!id){setForm(emptyPackage());setSlugEdited(false);setEditorReset(x=>x+1)}onSaved?.();router.refresh();
  }catch{setMessage("Network error. Check your connection.")}finally{setBusy(false)}}
  return <form onSubmit={save} className="space-y-6">
   <div className="grid gap-4 sm:grid-cols-2">
@@ -32,7 +32,7 @@ export function PackageFields({initial,id,onSaved}:{initial?:PackageInput;id?:st
   </div>
   <p className="-mt-4 text-[11px] leading-5 text-muted">Only prices approved by the travel team should be published. Discounts are indicative until a customer receives a confirmed quote.</p>
   <div><label className="label-field">Included features — one item per line</label><textarea className="input-field min-h-[130px] py-3" placeholder={"e.g. Flight coordination\nAccommodation guidance\nAirport transfers"} value={form.features.join("\n")} onChange={e=>update("features",e.target.value.split("\n").map(x=>x.trim()).filter(Boolean).slice(0,20))}/></div>
-  <div><label className="label-field">Full package description</label><RichTextEditor value={form.details} onChange={v=>update("details",v)}/></div>
+  <div><label className="label-field">Full package description</label><RichTextEditor key={editorReset} value={form.details} onChange={v=>update("details",v)}/></div>
   <div><label className="label-field">Package photos</label><PackageMedia images={form.images} onChange={v=>update("images",v)}/></div>
   {message&&<p role="status" className={`rounded-xl px-4 py-3 text-xs ${/error|unable|failed|check/i.test(message)?"bg-red-50 text-red-700":"bg-green-50 text-green-800"}`}>{message}</p>}
   <div className="flex flex-wrap items-center justify-between gap-3"><p className="text-[11px] text-muted">Saving does not book a flight or charge a customer.</p><Button disabled={busy} type="submit">{busy?"Saving...":<><Save size={16}/> {id?"Save package changes":"Create package"} <ArrowUpRight size={15}/></>}</Button></div>

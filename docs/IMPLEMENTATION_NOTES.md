@@ -28,3 +28,12 @@ pnpm dev
 ```
 
 The local website runs at `http://localhost:3000`. Database-dependent routes need `DATABASE_URL` and `RATE_LIMIT_SECRET` in a **local ignored** `.env.local`. Configure Vercel Production environment variables separately and never commit credentials. If no new migration has been applied, run it in Neon before testing package create/edit. For all future work, use a feature branch and test locally before pushing to GitHub and Vercel.
+
+### Quality and release gates
+
+- Run `pnpm install --frozen-lockfile`, `pnpm run typecheck`, `pnpm run lint`, `pnpm test` and `pnpm run build` on a branch before approving a production deploy.
+- The user-supplied official emblem is the favicon and the fallback for image-less package cards. The full company header/footer artwork is unchanged.
+- An `ImageKit` upload signature is a temporary authorization for a signed client upload, **not** proof that the browser-side 5 MB limit cannot be bypassed; keep the staff upload permission restricted to trusted owner/manager accounts and monitor usage.
+- On package creation, the rich editor remounts after success so text from a previous package is not mistakenly retained in the next draft.
+- Do not allow draft sample packages to be published until actual supplier terms, prices and images are approved.
+- No Neon schema changes have been executed by this code release; applying migration `001` remains a separate deliberate database step.

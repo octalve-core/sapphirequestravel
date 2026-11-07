@@ -1,0 +1,11 @@
+import Link from "next/link";
+import { ArrowUpRight, CalendarClock, Globe2, PlaneTakeoff, ShieldCheck, Users } from "lucide-react";
+
+const offerings = [
+  { icon: PlaneTakeoff, heading: "Air ticketing", copy: "Flight search assistance, itinerary coordination and ticket enquiries for domestic and international travel.", href: "/request?service=flight", action: "Enquire about flights" },
+  { icon: Users, heading: "Conference & delegation travel", copy: "Practical itinerary support for scientific events, institutional programmes and professional gatherings.", href: "/request?service=corporate", action: "Coordinate a group" },
+  { icon: ShieldCheck, heading: "Visa application assistance", copy: "Document-preparation and application guidance, including experience with UK visa applications. Visa decisions remain with issuing authorities.", href: "/request?service=visa", action: "Request visa support" },
+  { icon: Globe2, heading: "Personal & organisational travel", copy: "Customised plans for families, business travellers, associations and professional teams.", href: "/request?service=holiday", action: "Plan a trip" },
+  { icon: CalendarClock, heading: "Itinerary coordination", copy: "A clear review of preferred dates, routing and traveller requirements before confirming options and costs.", href: "/request", action: "Start an itinerary" },
+];
+export function ServiceCatalog() { return <section className="section-space bg-cloud"><div className="container-wide"><p className="eyebrow">How we can help</p><h2 className="display-heading mt-4 max-w-2xl text-3xl sm:text-4xl">Travel made more considered.</h2><div className="mt-12 grid gap-5 md:grid-cols-2 xl:grid-cols-3">{offerings.map(o=><article key={o.heading} className="surface-card flex flex-col p-7 sm:p-8"><o.icon aria-hidden className="text-sapphire" size={25} strokeWidth={1.5}/><h3 className="mt-7 text-lg font-medium text-navy">{o.heading}</h3><p className="mt-4 flex-1 text-sm leading-7 text-muted">{o.copy}</p><Link className="mt-7 inline-flex items-center gap-2 text-sm font-semibold text-sapphire" href={o.href}>{o.action}<ArrowUpRight size={16}/></Link></article>)}</div><p className="mt-10 text-xs leading-6 text-muted">All requests are handled by our travel team. An enquiry is not a confirmed reservation or visa approval.</p></div></section> }
