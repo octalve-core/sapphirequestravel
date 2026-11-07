@@ -31,13 +31,13 @@ pnpm dev
 
 **Database:** Open the Neon SQL editor in a development branch and execute `db/schema.sql` once. Set a dedicated **pooled** `DATABASE_URL` in `.env.local` (not in Git). The schema uses `pgcrypto` for UUID generation. Use a distinct production Neon branch/database and apply the same reviewed migration.
 
-**First staff owner:** after the schema exists, set `DATABASE_URL`, `ADMIN_EMAIL`, `ADMIN_NAME`, and a strong `ADMIN_PASSWORD` in a secure local shell, then run:
+**First staff owner:** after the schema exists, use the included Windows helper from the project root to enter the Neon connection and password privately:
 
-```bash
-pnpm run bootstrap:admin
+```powershell
+powershell -NoProfile -ExecutionPolicy Bypass -File .\\scripts\\bootstrap-admin.ps1
 ```
 
-The bootstrap command refuses to create a second account. Remove the bootstrap variables from the shell afterward. Never add a hard-coded default admin, staff password or database URL to repository source. For additional staff, implement an audited invitation/password-reset workflow before operational rollout.
+For Unix-based development, provide `DATABASE_URL`, `ADMIN_NAME`, `ADMIN_EMAIL` and a strong `ADMIN_PASSWORD` in the local process environment, then run `pnpm run bootstrap:admin`. The bootstrap command refuses to create a second account. The Windows helper always clears temporary environment variables. Never add a hard-coded default admin, staff password or database URL to repository source. For additional staff, implement an audited invitation/password-reset workflow before operational rollout.
 
 **Security configuration:** Set `RATE_LIMIT_SECRET` to a securely random value of 32+ characters. Cross-origin POSTs are rejected; enquiry submissions and sign-in use atomic Neon rate-limit buckets. Staff session tokens are stored as hashes in the database, revocable on logout. Plan for multi-factor authentication, password reset, verified account invitations, retention policy, consent review, abuse monitoring and security testing before broad production rollout. Use TLS end-to-end, backups and least-privilege DB credentials.
 
