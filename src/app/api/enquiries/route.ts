@@ -22,7 +22,7 @@ export async function POST(req: NextRequest) {
     const notes = enquiryNotes(x);
     await sql`WITH created AS (
       INSERT INTO enquiries(reference,service,name,email,phone,origin,destination,departure_date,return_date,travellers,notes)
-      VALUES (${reference},${x.service},${x.name},${x.email},${x.phone},${x.service === "flight" ? x.origin : null},${x.service === "flight" ? x.destination : null},${x.service === "flight" ? x.departureDate : null},${x.service === "flight" && x.returnDate ? x.returnDate : null},${x.service === "flight" ? x.travellers : 1},${notes})
+      VALUES (${reference},${x.service},${x.name},${x.email},${x.phone},${x.service === "flight" ? x.origin : null},${x.destination || null},${x.departureDate || null},${x.service === "flight" && x.returnDate ? x.returnDate : null},${x.travellers},${notes})
       RETURNING id
     ) INSERT INTO enquiry_events(enquiry_id,event_type,content)
       SELECT id,'created','Customer submitted enquiry' FROM created`;

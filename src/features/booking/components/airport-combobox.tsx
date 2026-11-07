@@ -4,9 +4,9 @@ import { MapPin, LoaderCircle } from "lucide-react";
 import type { AirportSuggestion, AirportResults } from "@/server/airport-types";
 import { airports } from "@/data/airports";
 
-type Props = { label: string; value: string; onChange: (code: string) => void; id?: string };
+type Props = { label: string; value: string; onChange: (code: string) => void; id?: string; placeholder?: string; helper?: string };
 
-export function AirportCombobox({ label, value, onChange, id }: Props) {
+export function AirportCombobox({ label, value, onChange, id, placeholder = "Search city, airport or code", helper }: Props) {
   const key = useId();
   const inputId = id || key;
   const [search, setSearch] = useState(() => {
@@ -17,7 +17,6 @@ export function AirportCombobox({ label, value, onChange, id }: Props) {
   const [open, setOpen] = useState(false);
   const [active, setActive] = useState(0);
   const [loading, setLoading] = useState(false);
-  const [source, setSource] = useState<AirportResults["source"]>("directory");
   const root = useRef<HTMLDivElement>(null);
 
   useEffect(() => {
@@ -28,7 +27,7 @@ export function AirportCombobox({ label, value, onChange, id }: Props) {
       setLoading(true);
       fetch(`/api/airports?q=${encodeURIComponent(query)}`, { signal: controller.signal })
         .then(async r => { if (!r.ok) throw new Error("Lookup unavailable"); return r.json() as Promise<AirportResults>; })
-        .then(x => { if (controller.signal.aborted) return; setOptions(x.results || []); setActive(0); setSource(x.source); })
+        .then(x => { if (controller.signal.aborted) return; setOptions(x.results || []); setActive(0); })
         .catch(() => { if (!controller.signal.aborted) { setOptions([]); setActive(0); } })
         .finally(() => { if (!controller.signal.aborted) setLoading(false); });
     }, 180);
@@ -48,15 +47,15 @@ export function AirportCombobox({ label, value, onChange, id }: Props) {
   }
 
   return <div ref={root} className="relative min-w-0">
-    <label htmlFor={inputId} className="mb-2 block text-[12px] font-semibold text-[#263752]">{label}</label>
+    <label htmlFor={inputId} className="booking-label">{label}</label>
     <div className="relative">
       <MapPin aria-hidden="true" size={16} className="pointer-events-none absolute left-3.5 top-1/2 -translate-y-1/2 text-sapphire"/>
       <input
         id={inputId} role="combobox" aria-autocomplete="list" aria-expanded={open}
         aria-controls={`${inputId}-results`} aria-activedescendant={open && options[active] ? `${inputId}-option-${active}` : undefined}
         aria-required="true" required autoComplete="off" spellCheck={false}
-        className="input-field min-w-0 pl-10 text-[13px]"
-        placeholder="City, airport or IATA code" value={search}
+        className="booking-input booking-airport"
+        placeholder={placeholder} value={search}
         onFocus={() => setOpen(true)}
         onChange={e => { setSearch(e.target.value); onChange(""); setOpen(true); }}
         onKeyDown={e => {
@@ -68,7 +67,8 @@ export function AirportCombobox({ label, value, onChange, id }: Props) {
       />
       {loading && <LoaderCircle aria-label="Searching airports" size={15} className="absolute right-3 top-1/2 -translate-y-1/2 animate-spin text-sapphire"/>}
     </div>
-    {open && <div id={`${inputId}-results`} role="listbox" className="absolute z-[100] mt-2 max-h-72 w-full min-w-[260px] overflow-y-auto rounded-2xl border border-[#e2e8f1] bg-white p-2 shadow-[0_20px_45px_-12px_rgba(6,26,54,.24)]">
+    {helper && <p className="mt-1.5 text-[11px] leading-4 text-muted">{helper}</p>}
+    {open && <div id={`${inputId}-results`} role="listbox" className="absolute z-[100] mt-2 max-h-72 w-full min-w-0 overflow-y-auto rounded-2xl border border-[#e2e8f1] bg-white p-2 shadow-[0_20px_45px_-12px_rgba(6,26,54,.24)]">
       {options.length ? options.map((airport, index) => <button
         type="button" key={`${airport.code}-${index}`} id={`${inputId}-option-${index}`} role="option"
         aria-selected={value === airport.code} onMouseDown={e => e.preventDefault()}
@@ -77,7 +77,7 @@ export function AirportCombobox({ label, value, onChange, id }: Props) {
         <span className="min-w-0"><span className="block text-[13px] font-semibold text-navy">{airport.city}</span><span className="mt-0.5 block text-[11px] leading-4 text-muted">{airport.name ? `${airport.name} · ` : ""}{airport.country}</span></span>
         <span className="shrink-0 rounded-md bg-[#eaf2ff] px-2 py-1 text-[11px] font-bold text-sapphire">{airport.code}</span>
       </button>) : <p className="px-3 py-4 text-xs text-muted">{loading ? "Finding airports..." : "No matches yet. Try another city, airport or code."}</p>}
-      <p className="mt-1 border-t border-[#e6edf5] px-3 pt-2 text-[10px] leading-5 text-muted">{source === "directory" ? "Airport reference: OurAirports (community-maintained)" : source === "amadeus" ? "Amadeus airport reference + local directory" : "Popular airport suggestions"} · Not flight availability</p>
+
     </div>}
   </div>;
 }
