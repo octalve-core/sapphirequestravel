@@ -40,3 +40,29 @@ assert.equal(enquirySchema.safeParse(roundTrip).success, true);
 const oneWay = { ...roundTrip, returnDate: "", flightRequest: { ...roundTrip.flightRequest, journey: "one-way", returnDate: "" } };
 assert.equal(enquirySchema.safeParse(oneWay).success, true);
 console.log("Flight itinerary validation passed: multi-city, return, one-way, passenger limits and invalid routes.");
+
+// Verify non-flight forms persist the same structured details that customers entered.
+const serviceOptions = [
+  { service: "visa", category: "tourism" },
+  { service: "holiday", category: "vacation" },
+  { service: "corporate", category: "conference" },
+] as const;
+for (const entry of serviceOptions) {
+  const form = {
+    service: entry.service, name: "Test Customer", email: "customer@example.org", phone: "+234 801 111 2222",
+    origin: "", destination: "SIN", departureDate: day(14), returnDate: "", travellers: 2,
+    notes: "", consent: true,
+    serviceRequest: { destination: "SIN", startDate: day(14), travellers: 2, category: entry.category, organisation: entry.service === "corporate" ? "Example Limited" : "" },
+  } as const;
+  const result = enquirySchema.safeParse(form);
+  assert.equal(result.success, true, `${entry.service}: ${JSON.stringify(!result.success ? result.error.issues : "")}`);
+  if (!result.success) continue;
+  const summary = enquiryNotes(result.data);
+  for (const marker of ["SIN", "2", entry.service.toUpperCase() === "HOLIDAY" ? "TOURS" : entry.service.toUpperCase()]) {
+    assert.ok(summary.includes(marker), `${entry.service}: missing ${marker}`);
+  }
+  assert.equal(enquirySchema.safeParse({ ...form, serviceRequest: { ...form.serviceRequest, destination: "DXB" } }).success, false);
+  assert.equal(enquirySchema.safeParse({ ...form, serviceRequest: { ...form.serviceRequest, category: "unsupported" } }).success, false);
+  assert.equal(enquirySchema.safeParse({ ...form, serviceRequest: { ...form.serviceRequest, startDate: day(-3) }, departureDate: day(-3) }).success, false);
+}
+console.log("Non-flight enquiry validation passed: visa, tours, corporate, destinations, dates and purpose.");

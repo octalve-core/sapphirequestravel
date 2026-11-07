@@ -1,4 +1,5 @@
 import { z } from "zod";
+import { serviceFields, serviceNames, selectionLabel, type OtherService } from "@/features/booking/lib/service-options";
 
 function isRealISODate(value: string) {
   if (!/^\d{4}-\d{2}-\d{2}$/.test(value)) return false;
@@ -17,6 +18,14 @@ export const flightRequestSchema = z.object({
   returnDate: z.string().max(10).default(""),
 });
 export type FlightRequest = z.infer<typeof flightRequestSchema>;
+export const serviceRequestSchema = z.object({
+  destination: airport,
+  startDate: z.string().max(10),
+  travellers: z.number().int().min(1).max(30),
+  category: z.string().trim().min(2).max(50),
+  organisation: z.string().trim().max(120).default(""),
+});
+
 
 export const enquirySchema = z.object({
   service: z.enum(["flight", "visa", "holiday", "corporate"]),
@@ -32,13 +41,22 @@ export const enquirySchema = z.object({
   website: z.string().max(200).optional().default(""),
   consent: z.literal(true),
   flightRequest: flightRequestSchema.optional(), // Legacy clients can still submit a simple itinerary.
+  serviceRequest: serviceRequestSchema.optional(), // Structured visa, tour and corporate requests.
 }).superRefine((v, ctx) => {
   const add = (message: string, path: (string | number)[]) => ctx.addIssue({ code: "custom", message, path });
   if (v.service !== "flight") {
     if (v.flightRequest) add("Flight details only apply to flight requests", ["flightRequest"]);
-    if (v.notes.trim().length < 6) add("Please describe your travel requirements", ["notes"]);
+    const request = v.serviceRequest;
+    if (request) {
+      const category = serviceFields[v.service].categories;
+      if (!category.some(item => item.value === request.category)) add("Please select a valid travel purpose or style", ["serviceRequest", "category"]);
+      if (!isRealISODate(request.startDate) || request.startDate < new Date().toISOString().slice(0, 10)) add("Please choose a valid future date", ["serviceRequest", "startDate"]);
+      if (v.destination !== request.destination || v.departureDate !== request.startDate || v.travellers !== request.travellers) add("The submitted travel details do not match", ["serviceRequest"]);
+      if (v.service !== "corporate" && request.organisation) add("Organisation is only available for corporate travel", ["serviceRequest", "organisation"]);
+    } else if (v.notes.trim().length < 6) add("Please describe your travel requirements", ["notes"]);
     return;
   }
+  if (v.serviceRequest) add("This service selection is not a flight request", ["serviceRequest"]);
   if (!/^[A-Z]{3}$/.test(v.origin) || !/^[A-Z]{3}$/.test(v.destination) || v.origin === v.destination) {
     add("Please select different departure and arrival airports", ["destination"]);
   }
@@ -74,7 +92,22 @@ export type EnquiryInput = z.infer<typeof enquirySchema>;
  *  This is deployment-safe before any schema migration, and visible to all agents.
  */
 export function enquiryNotes(x: EnquiryInput): string {
-  if (x.service !== "flight" || !x.flightRequest) return x.notes;
+  if (x.service !== "flight") {
+    if (!x.serviceRequest) return x.notes;
+    const selection = x.serviceRequest;
+    const service = x.service as OtherService;
+    const lines = [
+      `${serviceNames[service].toUpperCase()} ENQUIRY — customer-selected details`,
+      `Destination airport: ${selection.destination}`,
+      `Preferred travel date: ${selection.startDate}`,
+      `Travellers: ${selection.travellers}`,
+      `${serviceFields[service].categoryLabel}: ${selectionLabel(service, selection.category)}`,
+      ...(selection.organisation ? [`Organisation: ${selection.organisation}`] : []),
+    ];
+    if (x.notes) lines.push("", "Additional details:", x.notes);
+    return lines.join("\n");
+  }
+  if (!x.flightRequest) return x.notes;
   const f = x.flightRequest;
   const cabin = { economy: "Economy", "premium-economy": "Premium Economy", business: "Business", first: "First Class" }[f.cabinClass];
   const lines = [

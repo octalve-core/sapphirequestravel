@@ -39,3 +39,38 @@ test('airport search uses a durable local dataset with an optional Amadeus adapt
  assert.ok(existsSync(new URL('../scripts/refresh-airports.py', import.meta.url)));
  assert.match(read('.github/workflows/refresh-airports.yml'), /refresh-airports\.py/);
 });
+
+test('tours, visas and corporate requests have structured first-step fields and same contact step', () => {
+ const wizard = read('src/features/booking/components/enquiry-wizard.tsx');
+ const fields = read('src/features/booking/components/service-request-fields.tsx');
+ const options = read('src/features/booking/lib/service-options.ts');
+ const schema = read('src/server/enquiry-schema.ts');
+ assert.match(wizard, /ServiceRequestFields/);
+ assert.match(wizard, /Contact details/);
+ assert.match(wizard, /serviceRequest: service !== "flight"/);
+ assert.match(fields, /AirportCombobox/);
+ assert.match(fields, /startDate/);
+ assert.match(fields, /travellers/);
+ assert.match(fields, /category/);
+ for(const item of ['tourism','vacation','conference']) assert.ok(options.includes(item));
+ assert.match(schema, /serviceRequestSchema/);
+ assert.match(schema, /serviceFields\[v.service\]/);
+ assert.match(read('src/app/api/enquiries/route.ts'), /\$\{x.travellers\}/);
+});
+
+test('booking layout uses compact controls and a separate swap column', () => {
+ const ui = read('src/features/booking/components/enquiry-wizard.tsx');
+ const css = read('src/app/globals.css');
+ assert.match(css, /\.booking-input/);
+ assert.match(ui, /grid-cols-\[minmax\(0,1fr\)_36px_minmax\(0,1fr\)\]/);
+ assert.match(ui, /Direct flights and flexible dates are preferences, subject to availability/);
+ assert.doesNotMatch(ui, /agent-assisted/);
+ assert.doesNotMatch(ui, /not a confirmed booking/);
+});
+
+test('agent dashboard presents destination and planned date for non-flight enquiries', () => {
+ const view = read('src/features/admin/sections/enquiry-detail-section.tsx');
+ assert.match(view, /Destination airport/);
+ assert.match(view, /Preferred travel date/);
+ assert.match(view, /Travel details and notes/);
+});
