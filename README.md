@@ -16,13 +16,17 @@ Phase 1 ships a functional public site and agent-assisted travel enquiry workflo
 - Optional Resend email notifications (verified domain required)
 - Vercel-ready, deployable from GitHub; Cloudflare can manage DNS without email-hosting conflicts
 
+## Package management
+
+Use **pnpm exclusively** for installation, scripts and dependency updates. Commit `pnpm-lock.yaml` and use `pnpm install --frozen-lockfile` in CI after the lockfile is generated. Do not introduce npm/yarn lockfiles or run npm install in this project.
+
 ## Local development
 
-Requirements: Node 22+, a Neon project, `.env.local` configured from `.env.example`.
+Requirements: Node 22+, **pnpm 10.34.9** (the sole package manager), a Neon project, and `.env.local` configured from `.env.example`.
 
 ```bash
-npm install
-npm run dev
+pnpm install
+pnpm dev
 ```
 
 **Database:** Open the Neon SQL editor in a development branch and execute `db/schema.sql` once. Set a dedicated **pooled** `DATABASE_URL` in `.env.local` (not in Git). The schema uses `pgcrypto` for UUID generation. Use a distinct production Neon branch/database and apply the same reviewed migration.
@@ -30,7 +34,7 @@ npm run dev
 **First staff owner:** after the schema exists, set `DATABASE_URL`, `ADMIN_EMAIL`, `ADMIN_NAME`, and a strong `ADMIN_PASSWORD` in a secure local shell, then run:
 
 ```bash
-npm run bootstrap:admin
+pnpm run bootstrap:admin
 ```
 
 The bootstrap command refuses to create a second account. Remove the bootstrap variables from the shell afterward. Never add a hard-coded default admin, staff password or database URL to repository source. For additional staff, implement an audited invitation/password-reset workflow before operational rollout.
@@ -64,7 +68,7 @@ src/
   lib/                     # shared utilities
 ```
 
-Rules: server-only DB/auth, no private keys shipped to clients, no dummy live fares, no payment or PNR issuance before provider authorization. Compose pages from independent sections, not one giant file. Responsive layouts begin at 320px. Images in `public/images/` are compressed from Sapphire Quest's project-provided creative assets; destination scenery is illustrative unless explicitly identified. The company logo is currently represented by a restrained **temporary typographic/plane mark**; replace it with the supplied official vector mark before brand sign-off.
+Rules: server-only DB/auth, no private keys shipped to clients, no dummy live fares, no payment or PNR issuance before provider authorization. Compose pages from independent sections, not one giant file. Responsive layouts begin at 320px. Images in `public/images/` are compressed from Sapphire Quest's project-provided creative assets; destination scenery is illustrative unless explicitly identified. The supplied official Sapphire Quest artwork is used for the header, footer and favicon.
 
 ## Provider integration roadmap
 
@@ -78,6 +82,6 @@ Travel agency regulatory status and supplier agreements must be verified. Not al
 
 CI runs typecheck, lint, unit tests and build. Deployment is best performed via Vercel linked to the GitHub repo. Configure environment variables and Neon pooled URI in the Vercel project **privately**. Point the domain to Vercel using Cloudflare DNS; preserve existing Zoho MX/SPF/DKIM/DMARC records. Do not turn on Cloudflare Email Routing for addresses hosted in Zoho. Verify a Preview deployment and API error handling before updating the production alias.
 
-Manual pre-launch checks: keyboard & touch accessibility, 320px/768px/1440px layouts, Lighthouse performance, valid routes, admin RBAC, brute force protection, email delivery, DB backup recovery, legal terms/privacy review, actual company logo and CEO quote signoff. No Neon credentials, DNS settings, or external airline contracts have been supplied; **not production-provisioned yet**.
+Manual pre-launch checks: keyboard & touch accessibility, 320px/768px/1440px layouts, Lighthouse performance, valid routes, admin RBAC, brute force protection, email delivery, DB backup recovery, legal terms/privacy review, actual company logo and CEO quote signoff. Production secrets are configured in Vercel, never committed to source; verify live Neon integration and staff onboarding before enabling customer operations.
 
 © 2026 Sapphire Quest Travels & Tours Ltd.
