@@ -1,4 +1,3 @@
-import { Suspense } from "react";
 import { CheckCircle2 } from "lucide-react";
 import { MarketingLayout } from "@/components/layout/marketing-layout";
 import { ButtonLink } from "@/components/ui/button";
