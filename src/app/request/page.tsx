@@ -1,0 +1,7 @@
+import { Suspense } from "react";
+import type { Metadata } from "next";
+import { MarketingLayout } from "@/components/layout/marketing-layout";
+import { PageHero } from "@/components/layout/page-hero";
+import { RequestForm } from "@/features/booking/components/request-form";
+export const metadata:Metadata={title:"Plan your journey"};
+export default function RequestPage(){return <MarketingLayout><PageHero eyebrow="Let's get started" title="Tell us where you're going." description="A few details are all we need to begin. Our travel team will help you make the next arrangements."/><section className="section-space bg-white"><div className="container-wide grid gap-12 lg:grid-cols-[.7fr_1.3fr]"><div><h2 className="display-heading text-3xl">A personal next step.</h2><p className="mt-5 max-w-xs text-sm leading-7 text-muted">Submit your travel requirements and receive a reference number. Our team can then follow up with options and guidance.</p><div className="mt-8 rounded-xl border border-[#e5ecf5] p-5 text-sm text-[#465671]"><p className="font-semibold text-navy">Prefer a direct conversation?</p><a className="mt-2 block text-sapphire" href="mailto:info@sapphirequesttravel.com">info@sapphirequesttravel.com</a><a className="mt-1 block text-sapphire" href="tel:+2349162974349">+234 916 297 4349</a></div></div><Suspense fallback={<div className="surface-card min-h-[650px] animate-pulse bg-slate-50"/>}><RequestForm/></Suspense></div></section></MarketingLayout>}

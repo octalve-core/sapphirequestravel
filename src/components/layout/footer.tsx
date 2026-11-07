@@ -1,0 +1,12 @@
+import Link from "next/link";
+import { ArrowUpRight, Instagram, Mail, Phone } from "lucide-react";
+import { BrandMark } from "@/components/ui/brand-mark";
+import { brand } from "@/config/brand";
+export function Footer(){return <footer className="bg-[#061b3c] text-white">
+ <div className="container-wide pt-20 pb-10"><div className="grid gap-12 border-b border-white/10 pb-16 lg:grid-cols-[1.5fr_1fr_1fr_1.15fr]">
+ <div><BrandMark inverse/><p className="mt-7 max-w-xs text-sm leading-7 text-white/60">Thoughtful travel planning for meaningful journeys. From personal trips to professional and institutional travel.</p></div>
+ <div><h3 className="text-sm font-semibold">Explore</h3><div className="mt-6 flex flex-col gap-3 text-sm text-white/60"><Link href="/destinations" className="hover:text-white">Destinations</Link><Link href="/services" className="hover:text-white">Services</Link><Link href="/packages" className="hover:text-white">Travel packages</Link><Link href="/visa-assistance" className="hover:text-white">Visa assistance</Link><Link href="/corporate-travel" className="hover:text-white">Corporate travel</Link></div></div>
+ <div><h3 className="text-sm font-semibold">Company</h3><div className="mt-6 flex flex-col gap-3 text-sm text-white/60"><Link href="/about" className="hover:text-white">About us</Link><Link href="/contact" className="hover:text-white">Contact us</Link><Link href="/privacy" className="hover:text-white">Privacy policy</Link><Link href="/terms" className="hover:text-white">Terms of service</Link></div></div>
+ <div><h3 className="text-sm font-semibold">Start a conversation</h3><div className="mt-6 space-y-4 text-sm text-white/65"><a className="flex items-start gap-3 hover:text-white" href={`mailto:${brand.email}`}><Mail size={17}/><span className="break-all">{brand.email}</span></a><a className="flex items-center gap-3 hover:text-white" href={`tel:${brand.phone}`}><Phone size={17}/>{brand.phoneDisplay}</a><a className="flex items-center gap-3 hover:text-white" href={brand.instagram} target="_blank" rel="noreferrer"><Instagram size={17}/>{brand.socialHandle}<ArrowUpRight size={13}/></a></div></div>
+ </div><div className="flex flex-col justify-between gap-5 pt-7 text-xs text-white/45 sm:flex-row"><span>© {new Date().getUTCFullYear()} Sapphire Quest Travels &amp; Tours Ltd. All rights reserved.</span><span>Travel, thoughtfully arranged.</span></div></div>
+ </footer>}

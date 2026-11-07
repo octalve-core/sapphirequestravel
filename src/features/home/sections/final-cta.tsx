@@ -1,0 +1,3 @@
+import { ArrowUpRight } from "lucide-react";
+import { ButtonLink } from "@/components/ui/button";
+export function FinalCTA(){return <section className="section-space bg-[#eff5fd]"><div className="container-wide text-center"><p className="eyebrow">Your next chapter</p><h2 className="display-heading mx-auto mt-4 max-w-[810px] text-[clamp(2.7rem,5vw,5rem)]">A journey worth looking forward to.</h2><p className="mx-auto mt-6 max-w-lg text-sm leading-7 text-muted">Share your plans with us. We&apos;ll help you turn them into a practical next step.</p><div className="mt-9"><ButtonLink href="/request">Start planning <ArrowUpRight size={17}/></ButtonLink></div></div></section>}

@@ -1,0 +1,7 @@
+import { Suspense } from "react";
+import { CheckCircle2 } from "lucide-react";
+import { MarketingLayout } from "@/components/layout/marketing-layout";
+import { ButtonLink } from "@/components/ui/button";
+import type { Metadata } from "next";
+export const metadata:Metadata={title:"Thank you",robots:{index:false,follow:false}};
+export default async function Thanks({searchParams}:{searchParams:Promise<{ref?:string}>}){const p=await searchParams;const ref=typeof p.ref==="string"&&/^SQ-[A-Z0-9-]{8,28}$/.test(p.ref)?p.ref:null;return <MarketingLayout><div className="container-wide section-space flex min-h-[550px] items-center justify-center"><div className="max-w-xl text-center"><CheckCircle2 className="mx-auto h-12 w-12 text-sapphire"/><h1 className="display-heading mt-7 text-4xl">Thank you for reaching out.</h1><p className="mt-5 text-sm leading-7 text-muted">If you submitted an enquiry successfully, our team has received it and can follow up using the contact details provided.</p>{ref&&<div className="mt-8 rounded-xl border border-[#d6e5f8] bg-[#f1f7ff] p-5 text-sm"><p className="text-muted">Your reference</p><p className="mt-2 font-mono text-2xl font-semibold text-navy">{ref}</p></div>}<ButtonLink href="/" className="mt-8">Return home</ButtonLink></div></div></MarketingLayout>}

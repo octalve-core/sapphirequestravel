@@ -1,0 +1,5 @@
+import "server-only";
+import { db } from "@/server/db";
+export type EnquiryRow={id:string,reference:string,name:string,email:string,phone:string,service:string,origin:string|null,destination:string|null,departure_date:string|null,return_date:string|null,travellers:number,notes:string,status:string,created_at:string,assigned_to:string|null};
+export async function recentEnquiries(limit=10){const sql=db();const rows=await sql`SELECT id,reference,name,email,phone,service,origin,destination,departure_date::text,return_date::text,travellers,notes,status,created_at::text,assigned_to FROM enquiries ORDER BY created_at DESC LIMIT ${limit}`;return rows as EnquiryRow[]}
+export async function adminMetrics(){const sql=db();const rows=await sql`SELECT count(*)::int AS total,count(*) FILTER (WHERE status='new')::int AS new_count,count(*) FILTER(WHERE status IN ('reviewing','quoted','awaiting_customer'))::int AS in_progress,count(*) FILTER (WHERE created_at>now()-interval '7 days')::int AS last_week FROM enquiries`;return {total:Number(rows[0]?.total??0),newCount:Number(rows[0]?.new_count??0),inProgress:Number(rows[0]?.in_progress??0),lastWeek:Number(rows[0]?.last_week??0)}}
