@@ -10,13 +10,22 @@ jobs:
       contents: read
     steps:
       - uses: actions/checkout@v4
+      - uses: pnpm/action-setup@v4
+        with:
+          version: 10.34.9
+          run_install: false
       - uses: actions/setup-node@v4
         with:
           node-version: '22'
-      - run: npm install --no-audit --no-fund
-      - run: npm run typecheck
-      - run: npm run lint
-      - run: npm test
-      - run: npm run build
+      - run: pnpm install --no-frozen-lockfile
+      - name: Capture pnpm lockfile for review
+        run: |
+          printf 'SQ_LOCK_BEGIN\n'
+          base64 -w 0 pnpm-lock.yaml
+          printf '\nSQ_LOCK_END\n'
+      - run: pnpm run typecheck
+      - run: pnpm run lint
+      - run: pnpm test
+      - run: pnpm run build
         env:
           NEXT_TELEMETRY_DISABLED: '1'
