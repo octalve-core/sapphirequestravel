@@ -17,6 +17,7 @@ export function ServiceRequestFields({ service, value, onChange, idPrefix, minDa
   const set = <K extends keyof ServiceSelection>(key: K, next: ServiceSelection[K]) => onChange({ ...value, [key]: next });
   return <div className="space-y-4">
     <AirportCombobox
+      key={`${idPrefix}-${service}-destination`}
       id={`${idPrefix}-${service}-destination`}
       label={fields.destinationLabel}
       value={value.destination}
