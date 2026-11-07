@@ -16,9 +16,12 @@ export async function POST(req:NextRequest){
   const blocked=await consumeRateLimit(`enquiry:${requestIp(req)}:${x.email}`,5,15);
   if(blocked)return NextResponse.json({error:"Too many requests. Please contact our team directly."},{status:429});
   const sql=db();const reference=`SQ-${new Date().getUTCFullYear()}-${randomBytes(5).toString("hex").toUpperCase()}`;
-  const rows=await sql`INSERT INTO enquiries(reference,service,name,email,phone,origin,destination,departure_date,return_date,travellers,notes)
-   VALUES(${reference},${x.service},${x.name},${x.email},${x.phone},${x.service==="flight"?x.origin:null},${x.service==="flight"?x.destination:null},${x.service==="flight"?x.departureDate:null},${x.service==="flight"&&x.returnDate?x.returnDate:null},${x.service==="flight"?x.travellers:1},${x.notes}) RETURNING id`;
-  await sql`INSERT INTO enquiry_events(enquiry_id,event_type,content) VALUES(${String(rows[0].id)},'created','Customer submitted enquiry')`;
+  await sql`WITH created AS (
+   INSERT INTO enquiries(reference,service,name,email,phone,origin,destination,departure_date,return_date,travellers,notes)
+   VALUES(${reference},${x.service},${x.name},${x.email},${x.phone},${x.service==="flight"?x.origin:null},${x.service==="flight"?x.destination:null},${x.service==="flight"?x.departureDate:null},${x.service==="flight"&&x.returnDate?x.returnDate:null},${x.service==="flight"?x.travellers:1},${x.notes})
+   RETURNING id
+  ) INSERT INTO enquiry_events(enquiry_id,event_type,content)
+   SELECT id,'created','Customer submitted enquiry' FROM created`;
   await notifyNewEnquiry({reference,name:x.name,service:x.service});
   return NextResponse.json({ok:true,reference},{status:201,headers:{"Cache-Control":"no-store"}});
  }catch(err){console.error("Enquiry submission unavailable",err instanceof Error?err.message:"unknown");return NextResponse.json({error:"Our enquiry service is temporarily unavailable. Please email info@sapphirequesttravel.com."},{status:503})}
