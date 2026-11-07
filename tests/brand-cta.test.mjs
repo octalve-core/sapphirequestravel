@@ -34,3 +34,13 @@ test('admin login and sidebar use the same official header logo component', () =
   assert.match(login, /<BrandMark\s*\/>/);
   assert.doesNotMatch(login, /<Plane/);
 });
+
+
+test('homepage service and destination headings match the compact editorial scale', () => {
+  const services = read('src/features/home/sections/service-overview.tsx');
+  const destinations = read('src/features/home/sections/destination-showcase.tsx');
+  assert.match(services, /text-\[clamp\(1\.44rem,2\.76vw,2\.7rem\)\]/);
+  assert.match(destinations, /text-\[clamp\(1\.41rem,2\.88vw,2\.7rem\)\]/);
+  assert.match(services, /Travel services, shaped/);
+  assert.match(destinations, /Where will life take you\?/);
+});
