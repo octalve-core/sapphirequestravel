@@ -24,5 +24,5 @@ export async function POST(req:NextRequest){
    SELECT id,'created','Customer submitted enquiry' FROM created`;
   await notifyNewEnquiry({reference,name:x.name,service:x.service});
   return NextResponse.json({ok:true,reference},{status:201,headers:{"Cache-Control":"no-store"}});
- }catch(err){console.error("Enquiry submission unavailable",err instanceof Error?err.message:"unknown");return NextResponse.json({error:"Our enquiry service is temporarily unavailable. Please email info@sapphirequesttravel.com."},{status:503})}
+ }catch(err){console.error("Enquiry submission unavailable",err instanceof Error?err.message:"unknown");return NextResponse.json({error:"Our enquiry service is temporarily unavailable. Please email info@sapphirequestravel.com."},{status:503})}
 }
