@@ -1,9 +1,5 @@
-import { redirect } from "next/navigation";
 import type { Metadata } from "next";
-import { currentStaff,canManage } from "@/server/auth";
-import { db } from "@/server/db";
-import { AdminShell } from "@/features/admin/components/admin-shell";
-import { PackageForm } from "@/features/admin/components/package-form";
-import { PackageEditor } from "@/features/admin/components/package-editor";
-export const dynamic="force-dynamic";export const metadata:Metadata={title:"Packages CMS",robots:{index:false,follow:false}};
-export default async function Packages(){const user=await currentStaff();if(!user)redirect("/admin/login");let rows:{id:string,title:string,slug:string,summary:string,destination:string,status:string}[]=[];try{const sql=db();rows=await sql`SELECT id,title,slug,summary,destination,status FROM travel_packages ORDER BY created_at DESC LIMIT 100` as typeof rows}catch{}return <AdminShell user={user}><p className="eyebrow">Content management</p><h1 className="display-heading mt-3 text-4xl">Travel packages</h1><p className="mt-3 mb-9 text-sm text-muted">Prepare packages and control whether they are draft or published. Publish approved packages on the public site and edit their details here. No prices or inventory are implied.</p><div className="grid gap-7 xl:grid-cols-[1fr_.85fr]"><div className="surface-card p-6"><h2 className="mb-6 text-lg font-semibold">Existing packages</h2>{rows.length?rows.map(p=>canManage(user)?<PackageEditor key={p.id} data={p}/>:<div key={p.id} className="border-b border-[#eef1f5] py-4"><p className="font-semibold">{p.title}</p><p className="text-xs text-muted">{p.destination} • {p.status}</p></div>):<p className="text-sm text-muted">No packages yet.</p>}</div>{canManage(user)?<PackageForm/>:<p className="rounded-xl bg-white p-6 text-sm text-muted">Your account has read-only access.</p>}</div></AdminShell>}
+import { PackagesWorkspace } from "@/features/admin/sections/packages-workspace";
+export const dynamic="force-dynamic";
+export const metadata:Metadata={title:"Packages CMS",robots:{index:false,follow:false}};
+export default function Packages(){return <PackagesWorkspace/>}

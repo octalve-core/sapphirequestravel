@@ -2,10 +2,10 @@ export const brand = {
   name: "Sapphire Quest Travels & Tours Ltd",
   shortName: "Sapphire Quest",
   tagline: "Travel, thoughtfully arranged.",
-  email: "info@sapphirequesttravel.com",
+  email: "info@sapphirequestravel.com",
   phone: "+2349162974349",
   phoneDisplay: "+234 916 297 4349",
-  website: "https://sapphirequesttravel.com",
+  website: "https://sapphirequestravel.com",
   instagram: "https://instagram.com/sapphirequesttravel",
   socialHandle: "@sapphirequesttravel",
 } as const;

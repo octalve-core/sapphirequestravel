@@ -27,7 +27,7 @@ test('final CTA uses live HTML over a text-free cropped photo and links into rea
 test('admin login and sidebar use the same official header logo component', () => {
   const component = read('src/components/ui/brand-mark.tsx');
   const sidebar = read('src/features/admin/components/admin-shell.tsx');
-  const login = read('src/app/admin/login/page.tsx');
+  const login = read('src/features/admin/sections/login-screen.tsx');
   assert.match(component, /href=\{href\}/);
   assert.match(sidebar, /<BrandMark compact href="\/admin"\s*\/>/);
   assert.match(sidebar, /bg-white px-3 py-2/);
