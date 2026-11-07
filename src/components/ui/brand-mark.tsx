@@ -2,10 +2,10 @@ import Image from "next/image";
 import Link from "next/link";
 
 /** The actual brand artwork supplied by Sapphire Quest, never reconstructed in CSS. */
-export function BrandMark({ inverse = false, compact = false }: { inverse?: boolean; compact?: boolean }) {
+export function BrandMark({ inverse = false, compact = false, href = "/" }: { inverse?: boolean; compact?: boolean; href?: string }) {
   return (
     <Link
-      href="/"
+      href={href}
       className={`inline-flex shrink-0 items-center focus-visible:rounded-md focus-visible:outline-offset-4 ${compact && !inverse ? "p-2" : ""}`}
       aria-label="Sapphire Quest Travels & Tours Ltd — home"
     >
