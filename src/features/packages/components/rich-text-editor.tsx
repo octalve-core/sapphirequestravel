@@ -1,5 +1,5 @@
 "use client";
-import { useEffect, useRef } from "react";
+import { useEffect, useRef, useState } from "react";
 import { Bold, Italic, List, ListOrdered, Heading3, RotateCcw } from "lucide-react";
 import { asSafeContent, escapeText, type RichContent, type RichRun, type RichBlock } from "@/features/packages/components/rich-content";
 
@@ -45,18 +45,19 @@ function readContent(root: HTMLElement): RichContent {
 }
 export function RichTextEditor({ value, onChange }: { value: RichContent; onChange: (value: RichContent) => void }) {
   const editor = useRef<HTMLDivElement>(null);
-  useEffect(() => { if (editor.current) editor.current.innerHTML = markup(value); }, []); // Seed once; preserve the caret while typing.
+  const [initialMarkup] = useState(() => markup(value));
+  useEffect(() => { if (editor.current) editor.current.innerHTML = initialMarkup; }, [initialMarkup]); // Seed once; preserve the caret while typing.
   function command(name: string, argument?: string) { editor.current?.focus(); document.execCommand(name, false, argument); if (editor.current) onChange(readContent(editor.current)); }
-  const buttons = [
-    { label: "Bold", icon: Bold, action: () => command("bold") },
-    { label: "Italic", icon: Italic, action: () => command("italic") },
-    { label: "Heading", icon: Heading3, action: () => command("formatBlock", "h3") },
-    { label: "Bulleted list", icon: List, action: () => command("insertUnorderedList") },
-    { label: "Numbered list", icon: ListOrdered, action: () => command("insertOrderedList") },
-    { label: "Undo", icon: RotateCcw, action: () => command("undo") },
-  ];
+
   return <div className="overflow-hidden rounded-xl border border-[#d9e0eb] bg-white">
-    <div className="flex flex-wrap gap-1 border-b border-[#e8edf4] bg-[#f6f8fc] p-2" role="toolbar" aria-label="Text formatting">{buttons.map(b => <button type="button" aria-label={b.label} title={b.label} key={b.label} className="rounded-md p-2 text-navy hover:bg-white focus-visible:bg-white" onMouseDown={e => e.preventDefault()} onClick={b.action}><b.icon size={17}/></button>)}</div>
+    <div className="flex flex-wrap gap-1 border-b border-[#e8edf4] bg-[#f6f8fc] p-2" role="toolbar" aria-label="Text formatting">
+      <button type="button" aria-label="Bold" title="Bold" className="rounded-md p-2 text-navy hover:bg-white" onMouseDown={e => e.preventDefault()} onClick={() => command("bold")}><Bold size={17}/></button>
+      <button type="button" aria-label="Italic" title="Italic" className="rounded-md p-2 text-navy hover:bg-white" onMouseDown={e => e.preventDefault()} onClick={() => command("italic")}><Italic size={17}/></button>
+      <button type="button" aria-label="Heading" title="Heading" className="rounded-md p-2 text-navy hover:bg-white" onMouseDown={e => e.preventDefault()} onClick={() => command("formatBlock", "h3")}><Heading3 size={17}/></button>
+      <button type="button" aria-label="Bulleted list" title="Bulleted list" className="rounded-md p-2 text-navy hover:bg-white" onMouseDown={e => e.preventDefault()} onClick={() => command("insertUnorderedList")}><List size={17}/></button>
+      <button type="button" aria-label="Numbered list" title="Numbered list" className="rounded-md p-2 text-navy hover:bg-white" onMouseDown={e => e.preventDefault()} onClick={() => command("insertOrderedList")}><ListOrdered size={17}/></button>
+      <button type="button" aria-label="Undo" title="Undo" className="rounded-md p-2 text-navy hover:bg-white" onMouseDown={e => e.preventDefault()} onClick={() => command("undo")}><RotateCcw size={17}/></button>
+    </div>
     <div ref={editor} contentEditable suppressContentEditableWarning role="textbox" aria-label="Package details" aria-multiline="true" className="prose min-h-[190px] max-h-[450px] overflow-y-auto p-4 text-sm leading-7 text-[#263449] outline-none [&_h3]:my-2 [&_h3]:text-lg [&_h3]:font-semibold [&_li]:ml-6 [&_ol]:list-decimal [&_ul]:list-disc" onInput={e => onChange(readContent(e.currentTarget))}
       onPaste={e => { e.preventDefault(); const text=e.clipboardData.getData("text/plain"); document.execCommand("insertText", false, text.slice(0,12000)); }} />
     <div className="border-t border-[#e9edf5] px-4 py-2 text-[11px] text-muted">Format descriptions, highlights and bullet lists. Pasted text is plain text for safety.</div>

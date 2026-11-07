@@ -1,6 +1,6 @@
 import "server-only";
 import { airports } from "@/data/airports";
-import type { AirportSuggestion, AirportResults } from "@/server/airport-types";
+import type { AirportResults } from "@/server/airport-types";
 let tokenCache: { value: string; expiresAt: number } | null = null;
 const allowed = /^[a-zA-Z0-9 .,'()-]{1,40}$/;
 
