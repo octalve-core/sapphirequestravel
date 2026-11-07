@@ -17,7 +17,9 @@ test('real company-supplied artwork is used on light and dark surfaces', () => {
 test('final CTA uses live HTML over a text-free cropped photo and links into real enquiry flow', () => {
   const cta = read('src/features/home/sections/final-cta.tsx');
   assert.match(cta, /cta-airport-lounge\.webp/);
-  assert.match(cta, /backdrop-blur-xl/);
+  assert.match(cta, /bg-\[#032867\]\/65/);
+  assert.doesNotMatch(cta, /backdrop-blur-xl/);
+  assert.match(cta, /min-h-\[330px\]/);
   assert.match(cta, /A journey worth looking forward to/);
   assert.match(cta, /href="\/request"/);
   assert.ok(stat('public/images/cta-airport-lounge.webp').size > 0);
@@ -43,4 +45,28 @@ test('homepage service and destination headings match the compact editorial scal
   assert.match(destinations, /text-\[clamp\(1\.41rem,2\.88vw,2\.7rem\)\]/);
   assert.match(services, /Travel services, shaped/);
   assert.match(destinations, /Where will life take you\?/);
+});
+
+
+test('premium footer uses real navigation and Octalve developer credit', () => {
+  const footer = read('src/components/layout/footer.tsx');
+  assert.match(footer, /Octalve Holding/);
+  assert.match(footer, /https:\/\/www\.octalve\.com/);
+  assert.match(footer, /font-medium text-\[#2886ff\]/);
+  assert.doesNotMatch(footer, /Travel, thoughtfully arranged\./);
+});
+
+test('homepage alone uses the sapphire overlay and service cards use image gallery', () => {
+  const hero = read('src/features/home/sections/hero.tsx');
+  const internal = read('src/components/layout/page-hero.tsx');
+  const services = read('src/features/home/sections/service-overview.tsx');
+  assert.match(hero, /bg-\[#063779\]\/60/);
+  assert.match(internal, /bg-black\/60/);
+  for (const image of ['service-flights.webp','service-visa.webp','service-corporate.webp','service-holidays.webp']) {
+    assert.match(services, new RegExp(image.replace('.', '\\.')));
+    assert.ok(stat('public/images/' + image).size > 20000);
+  }
+  assert.match(services, /group-hover:scale-\[1\.075\]/);
+  assert.match(services, /group-focus-visible:opacity-100/);
+  assert.match(services, /sm:grid-cols-2/);
 });
