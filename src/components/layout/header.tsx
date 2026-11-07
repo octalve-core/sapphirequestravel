@@ -7,7 +7,7 @@ import { ButtonLink } from "@/components/ui/button";
 import { navItems } from "@/config/brand";
 export function Header(){ const [open,setOpen]=useState(false); return <header className="relative z-50 border-b border-[#edf0f6] bg-white/95 backdrop-blur-md">
  <div className="container-wide flex h-[92px] items-center justify-between gap-5">
-  <BrandMark/>
+  <BrandMark compact/>
   <nav aria-label="Main navigation" className="hidden items-center gap-8 xl:flex">{navItems.map(i=><Link key={i.href} href={i.href} className="text-[13px] font-medium text-[#465469] transition-colors hover:text-sapphire">{i.label}</Link>)}</nav>
   <div className="hidden items-center gap-4 xl:flex"><ButtonLink href="/request" className="min-h-11">Plan your trip <ArrowUpRight size={15}/></ButtonLink></div>
   <button type="button" className="rounded-lg p-2 xl:hidden" aria-label={open?"Close menu":"Open menu"} aria-expanded={open} onClick={()=>setOpen(!open)}>{open?<X/>:<Menu/>}</button>
