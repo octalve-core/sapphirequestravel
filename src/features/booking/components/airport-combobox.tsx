@@ -1,22 +1,23 @@
 "use client";
 import { useEffect, useId, useRef, useState } from "react";
-import { PlaneTakeoff } from "lucide-react";
+import { MapPin, LoaderCircle } from "lucide-react";
 import type { AirportSuggestion, AirportResults } from "@/server/airport-types";
 import { airports } from "@/data/airports";
 
 type Props = { label: string; value: string; onChange: (code: string) => void; id?: string };
 
-/** Accessible keyboard-friendly airport picker; never claims curated results are live IATA inventory. */
 export function AirportCombobox({ label, value, onChange, id }: Props) {
-  const uniqueId = useId();
-  const inputId = id || uniqueId;
-  const initial = airports.find(a => a.code === value);
-  const [search, setSearch] = useState(initial ? `${initial.city} (${initial.code})` : value);
+  const key = useId();
+  const inputId = id || key;
+  const [search, setSearch] = useState(() => {
+    const entry = airports.find(a => a.code === value);
+    return entry ? `${entry.city} (${entry.code})` : value;
+  });
   const [options, setOptions] = useState<AirportSuggestion[]>([]);
   const [open, setOpen] = useState(false);
   const [active, setActive] = useState(0);
-  const [source, setSource] = useState<AirportResults["source"]>("curated");
-  const [live, setLive] = useState(false);
+  const [loading, setLoading] = useState(false);
+  const [source, setSource] = useState<AirportResults["source"]>("directory");
   const root = useRef<HTMLDivElement>(null);
 
   useEffect(() => {
@@ -24,65 +25,59 @@ export function AirportCombobox({ label, value, onChange, id }: Props) {
     const controller = new AbortController();
     const query = search.match(/\(([A-Z]{3})\)$/)?.[1] || search;
     const timer = setTimeout(() => {
+      setLoading(true);
       fetch(`/api/airports?q=${encodeURIComponent(query)}`, { signal: controller.signal })
-        .then(async r => { if (!r.ok) throw new Error("Airport lookup unavailable"); return r.json() as Promise<AirportResults>; })
-        .then(x => {
-          if (controller.signal.aborted) return;
-          setOptions(x.results || []);
-          setActive(0);
-          setSource(x.source);
-          setLive(x.live);
-        })
-        .catch(() => { if (!controller.signal.aborted) { setOptions([]); setActive(0); } });
-    }, 250);
+        .then(async r => { if (!r.ok) throw new Error("Lookup unavailable"); return r.json() as Promise<AirportResults>; })
+        .then(x => { if (controller.signal.aborted) return; setOptions(x.results || []); setActive(0); setSource(x.source); })
+        .catch(() => { if (!controller.signal.aborted) { setOptions([]); setActive(0); } })
+        .finally(() => { if (!controller.signal.aborted) setLoading(false); });
+    }, 180);
     return () => { clearTimeout(timer); controller.abort(); };
   }, [search, open]);
 
   useEffect(() => {
-    const outside = (event: MouseEvent) => {
-      if (root.current && !root.current.contains(event.target as Node)) setOpen(false);
-    };
+    const outside = (e: MouseEvent) => { if (root.current && !root.current.contains(e.target as Node)) setOpen(false); };
     document.addEventListener("mousedown", outside);
     return () => document.removeEventListener("mousedown", outside);
   }, []);
 
-  function pick(airport: AirportSuggestion) {
+  function select(airport: AirportSuggestion) {
     onChange(airport.code);
     setSearch(`${airport.city} (${airport.code})`);
     setOpen(false);
   }
 
-  return <div className="relative" ref={root}>
-    <label htmlFor={inputId} className="label-field">{label}</label>
+  return <div ref={root} className="relative min-w-0">
+    <label htmlFor={inputId} className="mb-2 block text-[12px] font-semibold text-[#263752]">{label}</label>
     <div className="relative">
-      <PlaneTakeoff aria-hidden size={16} className="pointer-events-none absolute left-3 top-[18px] text-[#8190a5]"/>
+      <MapPin aria-hidden="true" size={16} className="pointer-events-none absolute left-3.5 top-1/2 -translate-y-1/2 text-sapphire"/>
       <input
         id={inputId} role="combobox" aria-autocomplete="list" aria-expanded={open}
-        aria-controls={`${inputId}-list`} aria-activedescendant={open && options.length ? `${inputId}-option-${active}` : undefined}
-        aria-required="true" required value={search} placeholder="Search city or airport"
-        autoComplete="off" className="input-field pl-10"
+        aria-controls={`${inputId}-results`} aria-activedescendant={open && options[active] ? `${inputId}-option-${active}` : undefined}
+        aria-required="true" required autoComplete="off" spellCheck={false}
+        className="input-field min-w-0 pl-10 text-[13px]"
+        placeholder="City, airport or IATA code" value={search}
         onFocus={() => setOpen(true)}
         onChange={e => { setSearch(e.target.value); onChange(""); setOpen(true); }}
         onKeyDown={e => {
           if (e.key === "Escape") { setOpen(false); return; }
-          if (e.key === "ArrowDown") { e.preventDefault(); setOpen(true); setActive(i => Math.min(i + 1, Math.max(0, options.length - 1))); }
-          if (e.key === "ArrowUp") { e.preventDefault(); setActive(i => Math.max(0, i - 1)); }
-          if (e.key === "Enter" && open && options[active]) { e.preventDefault(); pick(options[active]); }
+          if (e.key === "ArrowDown") { e.preventDefault(); setOpen(true); setActive(i => Math.min(i + 1, Math.max(options.length - 1, 0))); }
+          if (e.key === "ArrowUp") { e.preventDefault(); setActive(i => Math.max(i - 1, 0)); }
+          if (e.key === "Enter" && open && options[active]) { e.preventDefault(); select(options[active]); }
         }}
       />
+      {loading && <LoaderCircle aria-label="Searching airports" size={15} className="absolute right-3 top-1/2 -translate-y-1/2 animate-spin text-sapphire"/>}
     </div>
-    <input type="hidden" name={`${inputId}-code`} value={value}/>
-    {open && <div id={`${inputId}-list`} role="listbox" className="absolute z-[80] mt-2 max-h-72 w-full overflow-y-auto rounded-xl border border-[#e5ebf5] bg-white p-2 shadow-2xl">
+    {open && <div id={`${inputId}-results`} role="listbox" className="absolute z-[100] mt-2 max-h-72 w-full min-w-[260px] overflow-y-auto rounded-2xl border border-[#e2e8f1] bg-white p-2 shadow-[0_20px_45px_-12px_rgba(6,26,54,.24)]">
       {options.length ? options.map((airport, index) => <button
-        type="button" id={`${inputId}-option-${index}`} role="option"
-        aria-selected={value === airport.code} key={airport.code}
-        onMouseDown={e => e.preventDefault()}
-        onMouseEnter={() => setActive(index)} onClick={() => pick(airport)}
-        className={`flex w-full items-center justify-between gap-4 rounded-lg p-3 text-left hover:bg-[#edf4ff] focus:bg-[#edf4ff] ${active === index ? "bg-[#edf4ff]" : ""}`}>
-        <span className="min-w-0 text-sm font-medium text-navy">{airport.city}<span className="block truncate text-xs font-normal text-muted">{airport.name && airport.name !== airport.city ? `${airport.name} · ` : ""}{airport.country}</span></span>
-        <span className="shrink-0 rounded-md bg-[#eef4ff] px-2 py-1 text-xs font-bold text-sapphire">{airport.code}</span>
-      </button>) : <p className="px-3 py-4 text-xs text-muted">No matching airports. Try another city or IATA code.</p>}
-      <p className="border-t border-[#e9edf5] px-3 pt-2 text-[10px] text-muted">{source === "amadeus" ? (live ? "Airport results from Amadeus" : "Amadeus test data — not complete") : "Common airports only — live search requires provider access"}</p>
+        type="button" key={`${airport.code}-${index}`} id={`${inputId}-option-${index}`} role="option"
+        aria-selected={value === airport.code} onMouseDown={e => e.preventDefault()}
+        onMouseEnter={() => setActive(index)} onClick={() => select(airport)}
+        className={`flex w-full items-start justify-between gap-3 rounded-xl px-3 py-3 text-left transition-colors hover:bg-[#f0f5ff] ${active === index ? "bg-[#f0f5ff]" : ""}`}>
+        <span className="min-w-0"><span className="block text-[13px] font-semibold text-navy">{airport.city}</span><span className="mt-0.5 block text-[11px] leading-4 text-muted">{airport.name ? `${airport.name} · ` : ""}{airport.country}</span></span>
+        <span className="shrink-0 rounded-md bg-[#eaf2ff] px-2 py-1 text-[11px] font-bold text-sapphire">{airport.code}</span>
+      </button>) : <p className="px-3 py-4 text-xs text-muted">{loading ? "Finding airports..." : "No matches yet. Try another city, airport or code."}</p>}
+      <p className="mt-1 border-t border-[#e6edf5] px-3 pt-2 text-[10px] leading-5 text-muted">{source === "directory" ? "Airport reference: OurAirports (community-maintained)" : source === "amadeus" ? "Amadeus airport reference + local directory" : "Popular airport suggestions"} · Not flight availability</p>
     </div>}
   </div>;
 }
