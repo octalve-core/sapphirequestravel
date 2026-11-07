@@ -199,8 +199,8 @@ export function EnquiryWizard({ initial = {}, embedded = false }: { initial?: En
 
   return <section aria-label="Travel enquiry" className={embedded ? "container-wide" : "w-full"}>
     <div className="surface-card soft-shadow overflow-visible">
-      <div role="tablist" aria-label="Select a service" className="grid grid-cols-2 overflow-hidden rounded-t-[20px] border-b border-[#e6edf6] bg-[#f8faff] sm:grid-cols-4">
-        {tabs.map(({ key, icon: Icon }) => <button key={key} type="button" role="tab" aria-selected={service === key} onClick={() => changeService(key)} className={`flex min-h-[52px] min-w-0 items-center justify-center gap-2 border-b-2 px-3 text-[12px] font-medium sm:text-[13px] ${service === key ? "border-sapphire bg-[#eef4ff] text-sapphire" : "border-transparent text-[#52627a] hover:bg-white"}`}>
+      <div aria-label="Select a travel service" className="grid grid-cols-2 overflow-hidden rounded-t-[20px] border-b border-[#e6edf6] bg-[#f8faff] sm:grid-cols-4">
+        {tabs.map(({ key, icon: Icon }) => <button key={key} type="button" aria-pressed={service === key} onClick={() => changeService(key)} className={`flex min-h-[52px] min-w-0 items-center justify-center gap-2 border-b-2 px-3 text-[12px] font-medium sm:text-[13px] ${service === key ? "border-sapphire bg-[#eef4ff] text-sapphire" : "border-transparent text-[#52627a] hover:bg-white"}`}>
           <Icon aria-hidden size={16} className="shrink-0"/><span className="truncate">{serviceNames[key]}</span>
         </button>)}
       </div>

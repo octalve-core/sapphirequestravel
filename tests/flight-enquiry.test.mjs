@@ -67,3 +67,10 @@ test('booking layout uses compact controls and a separate swap column', () => {
  assert.doesNotMatch(ui, /agent-assisted/);
  assert.doesNotMatch(ui, /not a confirmed booking/);
 });
+
+test('agent dashboard presents destination and planned date for non-flight enquiries', () => {
+ const view = read('src/features/admin/sections/enquiry-detail-section.tsx');
+ assert.match(view, /Destination airport/);
+ assert.match(view, /Preferred travel date/);
+ assert.match(view, /Travel details and notes/);
+});
