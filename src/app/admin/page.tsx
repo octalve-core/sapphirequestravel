@@ -1,10 +1,5 @@
-import { redirect } from "next/navigation";
-import Link from "next/link";
-import { Inbox, Clock3, MailCheck, ArrowUpRight } from "lucide-react";
 import type { Metadata } from "next";
-import { currentStaff } from "@/server/auth";
-import { adminMetrics,recentEnquiries } from "@/server/admin-data";
-import { AdminShell } from "@/features/admin/components/admin-shell";
-import { EnquiryTable } from "@/features/admin/components/enquiry-table";
-export const dynamic="force-dynamic";export const metadata:Metadata={title:"Operations overview",robots:{index:false,follow:false}};
-export default async function Admin(){const user=await currentStaff();if(!user)redirect("/admin/login");let stats={total:0,newCount:0,inProgress:0,lastWeek:0};let enquiries:Awaited<ReturnType<typeof recentEnquiries>>=[];let error=false;try{[stats,enquiries]=await Promise.all([adminMetrics(),recentEnquiries(7)])}catch{error=true}const cards=[{label:"Total enquiries",value:stats.total,icon:Inbox},{label:"New requests",value:stats.newCount,icon:MailCheck},{label:"In progress",value:stats.inProgress,icon:Clock3},{label:"Last 7 days",value:stats.lastWeek,icon:Inbox}];return <AdminShell user={user}><div className="mb-9"><p className="eyebrow">Welcome, {user.name.split(" ")[0]}</p><h1 className="display-heading mt-3 text-3xl sm:text-4xl">Your operations, at a glance.</h1><p className="mt-3 text-sm text-muted">A clear view of incoming travel requests and ongoing conversations.</p></div>{error&&<div className="mb-6 rounded-xl border border-red-200 bg-red-50 p-5 text-sm text-red-800">The database is currently unavailable. Data could not be loaded.</div>}<div className="mb-10 grid gap-4 sm:grid-cols-2 xl:grid-cols-4">{cards.map(c=><div className="surface-card p-6" key={c.label}><div className="flex items-center justify-between text-muted"><span className="text-xs font-medium">{c.label}</span><c.icon size={18}/></div><p className="mt-8 text-4xl font-semibold tracking-[-.05em] text-navy">{error?"—":c.value}</p></div>)}</div><div className="mb-5 flex items-center justify-between"><h2 className="text-lg font-semibold tracking-[-.03em]">Recent enquiries</h2><Link href="/admin/enquiries" className="flex items-center gap-1 text-xs font-semibold text-sapphire">View all <ArrowUpRight size={14}/></Link></div><EnquiryTable rows={enquiries}/></AdminShell>}
+import { AdminOverviewSection } from "@/features/admin/sections/overview-section.tsx";
+export const dynamic="force-dynamic";
+export const metadata:Metadata={title:"Operations overview",robots:{index:false,follow:false}};
+export default function Admin(){return <AdminOverviewSection/>}
