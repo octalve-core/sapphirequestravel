@@ -1,8 +1,23 @@
+import Image from "next/image";
 import Link from "next/link";
-import { Plane } from "lucide-react";
-export function BrandMark({inverse=false}:{inverse?:boolean}) {
- return <Link href="/" className="inline-flex items-center gap-2.5" aria-label="Sapphire Quest home">
-   <span className={`flex h-11 w-11 items-center justify-center rounded-xl border ${inverse?"border-white/25 bg-white/15":"border-[#d4e6ff] bg-[#eef5ff]"}`}><Plane className={`h-5 w-5 -rotate-45 ${inverse?"text-white":"text-sapphire"}`} strokeWidth={1.8}/></span>
-   <span className={`flex flex-col leading-[1] tracking-[-.04em] ${inverse?"text-white":"text-navy"}`}><span className="text-xl font-bold">Sapphire <span className="font-medium">Quest</span></span><span className={`mt-1.5 text-[9px] font-medium tracking-[.12em] uppercase ${inverse?"text-white/65":"text-[#446da5]"}`}>Travels &amp; Tours Ltd</span></span>
- </Link>;
+
+/** The actual brand artwork supplied by Sapphire Quest, never reconstructed in CSS. */
+export function BrandMark({ inverse = false }: { inverse?: boolean }) {
+  return (
+    <Link
+      href="/"
+      className="inline-flex shrink-0 items-center focus-visible:rounded-md focus-visible:outline-offset-4"
+      aria-label="Sapphire Quest Travels & Tours Ltd — home"
+    >
+      <Image
+        src={inverse ? "/branding/sapphire-quest-on-dark.png" : "/branding/sapphire-quest-on-light.png"}
+        alt="Sapphire Quest Travels & Tours Ltd"
+        width={inverse ? 2048 : 594}
+        height={inverse ? 906 : 264}
+        priority={!inverse}
+        sizes={inverse ? "(max-width: 640px) 174px, 220px" : "(max-width: 640px) 150px, 194px"}
+        className={inverse ? "h-auto w-[174px] object-contain sm:w-[220px]" : "h-auto w-[150px] object-contain sm:w-[194px]"}
+      />
+    </Link>
+  );
 }
