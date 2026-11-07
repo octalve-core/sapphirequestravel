@@ -62,7 +62,10 @@ test('homepage alone uses the sapphire overlay and service cards use image galle
   const services = read('src/features/home/sections/service-overview.tsx');
   assert.match(hero, /bg-\[#063779\]\/60/);
   assert.match(internal, /bg-black\/60/);
-  assert.match(services, /images\.unsplash\.com/);
+  for (const image of ['service-flights.webp','service-visa.webp','service-corporate.webp','service-holidays.webp']) {
+    assert.match(services, new RegExp(image.replace('.', '\\.')));
+    assert.ok(stat('public/images/' + image).size > 20000);
+  }
   assert.match(services, /group-hover:scale-\[1\.075\]/);
   assert.match(services, /group-focus-visible:opacity-100/);
   assert.match(services, /sm:grid-cols-2/);

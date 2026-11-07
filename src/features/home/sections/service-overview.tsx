@@ -12,7 +12,7 @@ const services = [
     desc: "Domestic and international flights and itinerary coordination.",
     action: "Explore flights",
     href: "/request?service=flight",
-    photo: "https://images.unsplash.com/photo-1628186844945-c621ddeca8f8?auto=format&fit=crop&w=900&h=1160&q=84",
+    photo: "/images/service-flights.webp",
     alt: "Passenger aircraft at an airport gate in warm evening light",
   },
   {
@@ -20,7 +20,7 @@ const services = [
     desc: "Document preparation and guidance for visa applications.",
     action: "Visa support",
     href: "/visa-assistance",
-    photo: "https://images.unsplash.com/photo-1526778548025-fa2f459cd5c1?auto=format&fit=crop&w=900&h=1160&q=84",
+    photo: "/images/service-visa.webp",
     alt: "Travel planning map and personal travel essentials",
   },
   {
@@ -28,7 +28,7 @@ const services = [
     desc: "Thoughtful travel coordination for institutions and teams.",
     action: "Corporate travel",
     href: "/corporate-travel",
-    photo: "https://images.unsplash.com/photo-1497366811353-6870744d04b2?auto=format&fit=crop&w=900&h=1160&q=84",
+    photo: "/images/service-corporate.webp",
     alt: "Contemporary business interior with an editorial architectural perspective",
   },
   {
@@ -36,7 +36,7 @@ const services = [
     desc: "Personal journeys planned around your interests.",
     action: "Explore destinations",
     href: "/destinations",
-    photo: "https://images.unsplash.com/photo-1533105079780-92b9be482077?auto=format&fit=crop&w=900&h=1160&q=84",
+    photo: "/images/service-holidays.webp",
     alt: "Scenic Mediterranean coast and travel destination",
   },
 ] as const;
