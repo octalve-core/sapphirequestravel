@@ -1,6 +1,6 @@
 import test from 'node:test';
 import assert from 'node:assert/strict';
-import { readFileSync, existsSync } from 'node:fs';
+import { readFileSync } from 'node:fs';
 const read=p=>readFileSync(new URL('../'+p, import.meta.url),'utf8');
 test('strict TypeScript and Tailwind 4 configured',()=>{
  const ts=JSON.parse(read('tsconfig.json'));const pkg=JSON.parse(read('package.json'));
