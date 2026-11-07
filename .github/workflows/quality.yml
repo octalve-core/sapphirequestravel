@@ -22,6 +22,16 @@ jobs:
       - run: pnpm run typecheck
       - run: pnpm run lint
       - run: pnpm test
+      - name: Validate first-owner bootstrap without credentials
+        shell: bash
+        run: |
+          set +e
+          output="$(pnpm run bootstrap:admin 2>&1)"
+          status=$?
+          set -e
+          printf '%s\n' "$output"
+          test "$status" -eq 1
+          grep -q "Set DATABASE_URL" <<< "$output"
       - run: pnpm run build
         env:
           NEXT_TELEMETRY_DISABLED: '1'
