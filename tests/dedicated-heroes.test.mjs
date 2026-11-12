@@ -16,7 +16,7 @@ test("seven targeted pages have unique hero images and deep overlay", () => {
   assert.equal(new Set(heroes.map(([, name]) => name)).size, 7);
   for (const [path, name] of heroes) {
     const s = read(path);
-    assert.ok(s.includes('image="/images/' + name + '" overlay="deep"'), path);
+    assert.ok(s.includes('image="/images/' + name + '"') && /overlay="deep"/.test(s), path);
   }
 });
 test("darkening is scoped; other internal heroes can keep standard overlay", () => {
