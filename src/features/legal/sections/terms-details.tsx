@@ -1,2 +1,41 @@
 import { brand } from "@/config/brand";
-export function TermsDetails(){return <section className="section-space"><div className="container-wide max-w-3xl space-y-7 text-sm leading-8 text-[#4f5e73]"><p>Submitting an enquiry does not create a reservation, issue a ticket, guarantee an airfare or confirm visa approval. Our team will explain the available options, applicable service charges and third-party conditions before you agree to proceed.</p><p>Flight schedules, fare prices, baggage policies, entry requirements and service availability are set by third-party providers and may change. Customers must review traveller details and provide accurate information.</p><p>We provide visa application assistance but do not decide applications, guarantee outcomes or represent immigration authorities. Refunds or changes to confirmed services are subject to the terms agreed for the particular transaction.</p><p>For questions, contact <a href={`mailto:${brand.email}`} className="text-sapphire underline">{brand.email}</a>. These preliminary terms require formal legal review before payment-enabled services launch.</p></div></section>}
+
+export function TermsDetails() {
+  return (
+    <section className="section-space">
+      <div className="container-wide max-w-3xl space-y-7 text-sm leading-8 text-[#4f5e73]">
+        <h2 className="text-xl font-medium text-navy">How our travel service works</h2>
+        <p>
+          Sapphire Quest Travels & Tours Ltd helps travellers explore holiday packages, flights,
+          visa assistance and personalised itineraries. Enquiries begin a conversation with our
+          team. A booking is confirmed only when the applicable supplier issues confirmation and
+          the customer accepts the agreed booking terms.
+        </p>
+        <h2 className="text-xl font-medium text-navy">Prices and arrangements</h2>
+        <p>
+          Package prices shown as “From” are starting prices based on the described travel style,
+          room sharing and departure city. Your adviser will provide a complete breakdown of
+          your itinerary, inclusions, travel dates and total cost before payment. Airline fares,
+          rooms, excursions and third-party charges can vary with availability and travel dates.
+        </p>
+        <h2 className="text-xl font-medium text-navy">Travel documents</h2>
+        <p>
+          Travellers are responsible for accurate passenger details, valid passports, applicable
+          entry permissions, health documents and compliance with destination requirements.
+          Visa application support does not guarantee approval; visa decisions are made by the
+          relevant authorities. We will help identify the documentation needed for your trip.
+        </p>
+        <h2 className="text-xl font-medium text-navy">Changes and cancellations</h2>
+        <p>
+          Flight, hotel and experience changes, cancellations and refunds follow the terms
+          agreed for your specific booking and the rules of each provider. We will share
+          relevant conditions before you authorise a booking.
+        </p>
+        <p>
+          Questions about an itinerary or our services? Email
+          {" "}<a href={"mailto:" + brand.email} className="text-sapphire underline">{brand.email}</a>.
+        </p>
+      </div>
+    </section>
+  );
+}
