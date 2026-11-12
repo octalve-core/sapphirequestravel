@@ -7,7 +7,7 @@ export function Hero() {
   return (
     <section className="relative isolate overflow-hidden bg-navy text-white">
       <Image src="/images/hero-runway.webp" fill priority alt="Aircraft aligned with an illuminated runway at night" className="object-cover object-center" sizes="100vw"/>
-      <div aria-hidden="true" className="absolute inset-0 bg-[#063779]/60"/>
+      <div aria-hidden="true" className="absolute inset-0 bg-[#063779]/80"/>
       <div aria-hidden="true" className="absolute inset-0 bg-gradient-to-r from-[#04122f]/80 via-[#063b8d]/45 to-[#0755db]/10"/>
       <div className="container-wide relative flex min-h-[540px] items-center py-20 sm:min-h-[590px] lg:min-h-[600px]">
         <div className="max-w-[740px]">

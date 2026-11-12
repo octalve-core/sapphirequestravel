@@ -26,6 +26,14 @@ test("darkening is scoped; other internal heroes can keep standard overlay", () 
   assert.match(s, /overlay === "deep"/);
   assert.match(s, /overlay = "standard"/);
 });
+test("additional public heroes use the same deep overlay", () => {
+  for (const page of ["corporate-travel", "terms", "privacy"]) {
+    const s = read("src/app/" + page + "/page.tsx");
+    assert.match(s, /overlay="deep"/, page);
+  }
+  assert.match(read("src/features/home/sections/hero.tsx"), /bg-\[#063779\]\/80/);
+});
+
 test("home hero and supplied images are not overwritten", () => {
   assert.match(read("src/features/home/sections/hero.tsx"), /hero-runway\.webp/);
   assert.doesNotMatch(read("src/features/home/sections/hero.tsx"), /hero-(about|services|packages|visa|curated-travel|contact|request)\.webp/);
