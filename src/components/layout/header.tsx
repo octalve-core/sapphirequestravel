@@ -57,6 +57,16 @@ export function Header() {
     if (dialogRef.current?.open) dialogRef.current.close();
   }, [pathname]);
 
+  useEffect(() => {
+    // Prevent a hidden modal from trapping the page after desktop resizing.
+    const desktop = window.matchMedia("(min-width: 1280px)");
+    const onResize = () => {
+      if (desktop.matches && dialogRef.current?.open) dialogRef.current.close();
+    };
+    desktop.addEventListener("change", onResize);
+    return () => desktop.removeEventListener("change", onResize);
+  }, []);
+
   function openMobile() {
     if (!dialogRef.current?.open) dialogRef.current?.showModal();
     setMobileOpen(true);
@@ -109,7 +119,7 @@ export function Header() {
             <button
               ref={exploreButtonRef}
               type="button"
-              aria-controls="sapphire-explore-dropdown"
+              aria-controls={exploreOpen ? "sapphire-explore-dropdown" : undefined}
               aria-expanded={exploreOpen}
               onClick={() => setExploreOpen((value) => !value)}
               className="inline-flex min-h-11 items-center gap-1.5 whitespace-nowrap text-[12px] font-medium text-[#465469] transition-colors hover:text-sapphire 2xl:text-[13px]"
@@ -204,7 +214,7 @@ export function Header() {
               ))}
               <button
                 type="button"
-                aria-controls="sapphire-mobile-explore"
+                aria-controls={mobileExploreOpen ? "sapphire-mobile-explore" : undefined}
                 aria-expanded={mobileExploreOpen}
                 onClick={() => setMobileExploreOpen((value) => !value)}
                 className="flex min-h-12 w-full items-center justify-between rounded-xl px-4 text-left text-[15px] font-medium text-[#243853] hover:bg-[#f3f6fb]"
