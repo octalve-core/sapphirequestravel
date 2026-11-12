@@ -36,8 +36,9 @@ test("footer is pure black; branding, enquiries and notification mail use new ad
   assert.match(source("src/app/api/enquiries/route.ts"), /info@sapphirequesttravel\.com/);
   assert.match(source("src/server/notifications.ts"), /notifications@sapphirequesttravel\.com/);
   assert.match(source(".env.example"), /NOTIFY_TO="info@sapphirequesttravel\.com"/);
+  assert.match(source("src/features/admin/components/login-form.tsx"), /you@sapphirequesttravel\.com/);
   assert.doesNotMatch(
-    ["src/config/brand.ts","src/app/api/enquiries/route.ts","src/server/notifications.ts",".env.example"].map(source).join("\n"),
+    ["src/config/brand.ts","src/app/api/enquiries/route.ts","src/server/notifications.ts","src/features/admin/components/login-form.tsx",".env.example"].map(source).join("\n"),
     /@sapphirequestravel\.com/,
   );
 });
