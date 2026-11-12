@@ -16,7 +16,7 @@ Exact filenames under public/images/:
 
 Clarification: The existing wording 'Curated travel' is an eyebrow on the Packages hero, not a separate URL. The separate curated image is mapped to Explore/Destinations (/destinations) so there are seven distinct route heroes. The Packages page retains its own unique hero image.
 
-Only the seven requested pages select overlay='deep' (80% black). The PageHero default remains 60% black for Corporate travel and package detail views. Home has its own blue overlay and is unchanged.
+The seven replacement-image pages and Corporate travel, Terms, and Privacy select overlay='deep' (80% black). The shared PageHero default remains 60% for any other uses (including individual package detail views). Home is still a separate blue hero; its base sapphire layer increased from 60% to 80%, with its existing blue gradient retained. As two layers combine, its visible darkening can exceed 80% in places. Home, Corporate travel, Terms and Privacy keep their existing image paths and require no new images.
 
 Recommended format: landscape WebP photographs, approximately 2400 x 1200 pixels, with a composition that remains legible under a dark overlay. Prefer an optimized photo ~250-700 KiB when image quality permits.
 
