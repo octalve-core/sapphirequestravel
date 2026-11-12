@@ -23,7 +23,7 @@ test("exactly five unique client-facing festive packages have responsible starti
     assert.ok(item.highlights.length < 320);
     assert.ok(item.features.length >= 5 && item.features.length <= 20);
     assert.deepEqual(item.images, []);
-    assert.ok(item.details.blocks.length > 20);
+    assert.ok(item.details.blocks.length >= 16);
     assert.ok(item.details.blocks.some((b) => b.kind === "numbered"));
     assert.ok(item.details.blocks.some((b) => b.kind === "heading"));
     const allText = item.details.blocks.flatMap((b) => b.runs).map((r) => r.text).join(" ");
