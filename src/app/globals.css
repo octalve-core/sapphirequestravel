@@ -36,3 +36,34 @@ button { cursor:pointer; }
 .booking-input:disabled { background:#f3f6fa; color:#7b879b; }
 .booking-input.booking-airport { padding-left:41px; padding-right:34px; }
 textarea.booking-input { min-height:88px; padding-block:12px; }
+
+
+/* Native modal drawer: browser handles focus containment, Escape and scroll lock. */
+.mobile-nav-dialog {
+  position: fixed;
+  inset: 0;
+  box-sizing: border-box;
+  margin: 0;
+  width: 100vw;
+  height: 100dvh;
+  max-width: none;
+  max-height: none;
+  padding: 0;
+  border: 0;
+  background: transparent;
+  color: #101c33;
+}
+.mobile-nav-dialog::backdrop {
+  background: rgba(2, 12, 29, .62);
+  backdrop-filter: blur(3px);
+}
+.mobile-nav-panel {
+  transform: translateX(0);
+  transition: transform 290ms cubic-bezier(.2,.8,.2,1);
+}
+@starting-style {
+  .mobile-nav-dialog[open] .mobile-nav-panel { transform: translateX(100%); }
+}
+@media (prefers-reduced-motion: reduce) {
+  .mobile-nav-panel { transition: none; }
+}

@@ -30,6 +30,6 @@ export async function POST(req: NextRequest) {
     return NextResponse.json({ ok: true, reference }, { status: 201, headers: { "Cache-Control": "no-store" } });
   } catch (error) {
     console.error("Enquiry submission unavailable", error instanceof Error ? error.message : "unknown");
-    return NextResponse.json({ error: "Our enquiry service is temporarily unavailable. Please email info@sapphirequestravel.com." }, { status: 503 });
+    return NextResponse.json({ error: "Our enquiry service is temporarily unavailable. Please email info@sapphirequesttravel.com." }, { status: 503 });
   }
 }
