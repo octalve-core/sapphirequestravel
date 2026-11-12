@@ -34,7 +34,7 @@ test("footer is pure black; branding, enquiries and notification mail use new ad
   assert.match(source("src/components/layout/footer.tsx"), /bg-\[#000000\]/);
   assert.match(source("src/config/brand.ts"), /info@sapphirequesttravel\.com/);
   assert.match(source("src/app/api/enquiries/route.ts"), /info@sapphirequesttravel\.com/);
-  assert.match(source("src/server/notifications.ts"), /notifications@sapphirequesttravel\.com/);
+  assert.match(source("src/server/notifications.ts"), /info@sapphirequesttravel\.com/);
   assert.match(source(".env.example"), /NOTIFY_TO="info@sapphirequesttravel\.com"/);
   assert.match(source("src/features/admin/components/login-form.tsx"), /you@sapphirequesttravel\.com/);
   assert.doesNotMatch(
