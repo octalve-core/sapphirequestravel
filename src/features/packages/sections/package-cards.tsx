@@ -1,12 +1,62 @@
 import Link from "next/link";
-import { db } from "@/server/db";
 import { ArrowUpRight, MapPin } from "lucide-react";
-import { ButtonLink } from "@/components/ui/button";
+import { publicPackageCatalog } from "@/server/package-catalog";
 import { PackagePrice } from "@/features/packages/components/package-price";
 import { PackageImage } from "@/features/packages/components/package-image";
-type PackageCard={id:string;title:string;slug:string;destination:string;summary:string;images:string[];priceAmount:number|null;currency:string;discountPercent:number};
-export async function PackageCards(){let packages:PackageCard[]=[];
- try{if(process.env.DATABASE_URL){const sql=db();packages=(await sql`SELECT id,title,slug,destination,summary,images,price_amount::float AS "priceAmount",currency,discount_percent AS "discountPercent" FROM travel_packages WHERE status='published' ORDER BY updated_at DESC LIMIT 60`) as PackageCard[]}}
- catch{try{const sql=db();const old=await sql`SELECT id,title,slug,destination,summary FROM travel_packages WHERE status='published' ORDER BY updated_at DESC LIMIT 60`;packages=old.map(p=>({id:String(p.id),title:String(p.title),slug:String(p.slug),destination:String(p.destination),summary:String(p.summary),images:[],priceAmount:null,currency:"NGN",discountPercent:0}))}catch{}}
- return <section className="section-space"><div className="container-wide">{!packages.length?<div className="rounded-3xl bg-[#f1f6fd] px-8 py-20 text-center"><h2 className="display-heading text-3xl">Your next adventure is taking shape.</h2><p className="mx-auto mt-4 max-w-lg text-sm leading-7 text-muted">Our travel team can recommend arrangements based on your interests, dates and budget, even when no package is advertised here.</p><ButtonLink href="/request?service=holiday" className="mt-8">Ask about a trip <ArrowUpRight size={15}/></ButtonLink></div>:<div className="grid gap-6 md:grid-cols-2 xl:grid-cols-3">{packages.map(p=><Link key={p.id} href={`/packages/${p.slug}`} className="group surface-card overflow-hidden"><div className="relative aspect-[16/10] overflow-hidden"><PackageImage src={p.images?.[0]} alt={`${p.title} travel package`} className="transition-transform duration-500 group-hover:scale-105"/></div><div className="p-7"><p className="flex items-center gap-2 text-xs text-sapphire"><MapPin size={14}/>{p.destination}</p><h2 className="mt-3 text-xl font-semibold tracking-[-.035em]">{p.title}</h2><p className="mt-3 line-clamp-3 text-sm leading-7 text-muted">{p.summary}</p><div className="mt-5"><PackagePrice amount={p.priceAmount} currency={p.currency} discount={p.discountPercent}/></div><span className="mt-5 inline-flex items-center gap-2 text-sm font-semibold text-sapphire">Explore package <ArrowUpRight size={16}/></span></div></Link>)}</div>}<p className="mt-7 max-w-3xl text-xs leading-6 text-muted">Displayed prices, if any, are indicative and subject to confirmation by Sapphire Quest. Viewing a package does not constitute a reservation.</p></div></section>;
+
+export async function PackageCards() {
+  const packages = await publicPackageCatalog();
+  return (
+    <section className="section-space" aria-labelledby="travel-collection-heading">
+      <div className="container-wide">
+        <div className="mb-11 max-w-3xl">
+          <p className="eyebrow">Festive collection · December 2026 – January 2027</p>
+          <h2 id="travel-collection-heading" className="display-heading mt-4 text-3xl text-navy sm:text-4xl">
+            Your next story starts here.
+          </h2>
+          <p className="mt-5 max-w-[640px] text-sm leading-7 text-muted">
+            From vibrant city celebrations to peaceful island mornings, choose the experience that feels like you.
+            Our travel specialists bring together the itinerary, stays and thoughtful details.
+          </p>
+        </div>
+        <div className="grid gap-6 md:grid-cols-2 xl:grid-cols-3">
+          {packages.map((item) => (
+            <Link
+              href={"/packages/" + item.slug}
+              key={item.id}
+              className="group surface-card overflow-hidden transition-transform duration-300 hover:-translate-y-1"
+            >
+              <div className="relative aspect-[16/10] overflow-hidden bg-[#e8eef8]">
+                <PackageImage
+                  src={item.images?.[0]}
+                  alt={item.title + " travel experience"}
+                  className="transition-transform duration-500 group-hover:scale-105"
+                />
+              </div>
+              <div className="p-7">
+                <p className="flex items-center gap-2 text-[12px] font-medium text-sapphire">
+                  <MapPin size={14} aria-hidden="true" /> {item.destination}
+                </p>
+                <h3 className="mt-3 text-[21px] font-medium leading-snug tracking-[-.035em] text-navy">
+                  {item.title}
+                </h3>
+                <p className="mt-3 line-clamp-3 text-[13px] leading-7 text-muted">{item.summary}</p>
+                <div className="mt-6 border-t border-[#e9edf3] pt-5">
+                  <PackagePrice amount={item.priceAmount} currency={item.currency} discount={item.discountPercent}/>
+                  <p className="mt-1 text-[11px] text-muted">Per adult sharing · Lagos departure</p>
+                </div>
+                <span className="mt-6 inline-flex items-center gap-2 text-[13px] font-medium text-sapphire">
+                  Discover this journey <ArrowUpRight size={16} aria-hidden="true" />
+                </span>
+              </div>
+            </Link>
+          ))}
+        </div>
+        <p className="mt-8 max-w-3xl text-[12px] leading-6 text-muted">
+          Each escape is planned around your chosen departure date. Your travel adviser will confirm the itinerary,
+          accommodation and full trip total before you make payment.
+        </p>
+      </div>
+    </section>
+  );
 }
