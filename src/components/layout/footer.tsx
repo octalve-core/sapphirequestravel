@@ -55,7 +55,7 @@ function FooterColumn({ title, links }: { title: string; links: readonly { label
 /** Full-width, editorial footer modelled after the spacious Octalve Vault layout. */
 export function Footer() {
   return (
-    <footer className="bg-[#020d1f] text-white">
+    <footer className="bg-[#000000] text-white">
       <div className="container-wide pt-16 pb-7 sm:pt-20 lg:pt-24">
         <div className="flex flex-col justify-between gap-8 md:flex-row md:items-start">
           <div className="max-w-[840px]">
