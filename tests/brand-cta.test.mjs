@@ -60,7 +60,7 @@ test('homepage alone uses the sapphire overlay and service cards use image galle
   const hero = read('src/features/home/sections/hero.tsx');
   const internal = read('src/components/layout/page-hero.tsx');
   const services = read('src/features/home/sections/service-overview.tsx');
-  assert.match(hero, /bg-\[#063779\]\/60/);
+  assert.match(hero, /bg-\[#063779\]\/80/);
   assert.match(internal, /bg-black\/60/);
   for (const image of ['service-flights.webp','service-visa.webp','service-corporate.webp','service-holidays.webp']) {
     assert.match(services, new RegExp(image.replace('.', '\\.')));
