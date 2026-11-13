@@ -40,7 +40,17 @@ export async function publicPackageCatalog(): Promise<PackageRecord[]> {
     const slug = typeof row.slug === "string" ? row.slug : "";
     if (legacyDemonstrationSlugs.has(slug)) continue;
     if (typeof row.title === "string" && row.title.startsWith("SAMPLE")) continue;
-    const parsed = packageSchema.safeParse(row);
+    const seedHome = bySlug.get(slug)?.details.home;
+    const rawDetails = row.details;
+    const objectDetails = rawDetails && typeof rawDetails === "object" && !Array.isArray(rawDetails)
+      ? rawDetails as Record<string, unknown> : null;
+    // A previously imported package may not yet have homepage settings. Reuse
+    // the original editorial defaults until an admin explicitly saves settings.
+    // Explicit enabled:false must NOT be overridden by seeded defaults.
+    const candidate = seedHome && objectDetails && !Object.prototype.hasOwnProperty.call(objectDetails, "home")
+      ? { ...row, details: { ...objectDetails, home: seedHome } }
+      : row;
+    const parsed = packageSchema.safeParse(candidate);
     if (!parsed.success) continue;
     const record: PackageRecord = { ...parsed.data, id: String(row.id) };
     if (featuredPackageSlugs.has(record.slug)) {

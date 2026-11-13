@@ -39,9 +39,9 @@ export function FestiveCollectionImport() {
   return (
     <div className="mb-9 flex flex-wrap items-center justify-between gap-5 rounded-2xl border border-[#d8e5f5] bg-[#f4f8ff] p-6">
       <div className="max-w-xl">
-        <p className="text-[13px] font-medium text-navy">Festive travel collection · 2026/27</p>
+        <p className="text-[13px] font-medium text-navy">Curated travel collection</p>
         <p className="mt-2 text-[12px] leading-6 text-muted">
-          Add the five curated journeys to your editor to adjust prices, upload photos and refine itineraries.
+          Add the six curated journeys to your editor to adjust prices, upload photos and refine itineraries.
           Packages already in your editor will not be overwritten.
         </p>
         {feedback && (
@@ -57,7 +57,7 @@ export function FestiveCollectionImport() {
         className="inline-flex min-h-11 shrink-0 items-center justify-center gap-2 rounded-full bg-sapphire px-5 text-[12px] font-medium text-white disabled:opacity-60"
       >
         {working ? <LoaderCircle size={16} className="animate-spin" aria-hidden="true" /> : <ArrowUpRight size={16} aria-hidden="true" />}
-        {working ? "Adding collection..." : "Add five packages to editor"}
+        {working ? "Adding collection..." : "Add curated packages to editor"}
       </button>
     </div>
   );

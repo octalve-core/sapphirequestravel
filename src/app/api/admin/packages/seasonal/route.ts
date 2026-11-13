@@ -52,7 +52,7 @@ export async function POST(req: NextRequest) {
       ok: true,
       created,
       unchanged: featuredPackages.length - created,
-      message: created > 0 ? "The festive collection has been added to your package editor." : "The collection is already in your package editor.",
+      message: created > 0 ? "The curated collection has been added to your package editor." : "Your curated collection is already in the package editor.",
     });
   } catch (error) {
     console.error("Festive package import failed", error instanceof Error ? error.message : "unknown");

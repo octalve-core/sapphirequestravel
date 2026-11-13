@@ -504,7 +504,14 @@
             }
           ]
         }
-      ]
+      ],
+      "home": {
+        "enabled": true,
+        "position": 3,
+        "title": "Coastal escapes",
+        "label": "Zanzibar, Tanzania",
+        "image": "/images/coastal.webp"
+      }
     }
   },
   {
@@ -675,7 +682,14 @@
             }
           ]
         }
-      ]
+      ],
+      "home": {
+        "enabled": true,
+        "position": 2,
+        "title": "Global connections",
+        "label": "Dubai, United Arab Emirates",
+        "image": "/images/global-routes.webp"
+      }
     }
   },
   {
@@ -859,6 +873,194 @@
           "runs": [
             {
               "text": "Available for travel planning across the 2026/27 festive period. Our team will agree your departure dates, named hotel, flight routing and final total with you before any payment. Departures from Abuja and other Nigerian cities can be arranged separately."
+            }
+          ]
+        }
+      ],
+      "home": {
+        "enabled": true,
+        "position": 4,
+        "title": "Meaningful moments",
+        "label": "Cape Town, South Africa",
+        "image": "/images/travel-moment.webp"
+      }
+    }
+  },
+  {
+    "title": "Singapore Signature — City, Gardens & Culture",
+    "slug": "singapore-signature-city-gardens-culture",
+    "destination": "Singapore",
+    "summary": "Six days of extraordinary gardens, waterfront icons, colourful heritage quarters and island leisure. Explore Singapore's unmistakable mix of culture, design and discovery, with your itinerary personally arranged from Nigeria.",
+    "highlights": "6 days · 5 nights · Lagos departure · Gardens by the Bay · Sentosa",
+    "status": "published",
+    "priceAmount": null,
+    "currency": "NGN",
+    "discountPercent": 0,
+    "features": [
+      "Return flight planning from Lagos with preferred cabin and baggage options",
+      "Five nights of centrally located hotel accommodation, room selection agreed in your quote",
+      "Daily hotel breakfast in the proposed itinerary",
+      "Airport arrival and departure transfer arrangements",
+      "Gardens by the Bay discovery, with ticketed conservatories in the proposed itinerary",
+      "Guided Marina Bay and civic waterfront discovery",
+      "Chinatown and Kampong Gelam heritage experiences",
+      "Sentosa Island leisure outing",
+      "Singapore visa documentation guidance and personal itinerary assistance"
+    ],
+    "images": [],
+    "ratingScore": null,
+    "ratingCount": 0,
+    "ratingSource": "",
+    "details": {
+      "home": {
+        "enabled": true,
+        "position": 1,
+        "title": "Singapore",
+        "label": "Southeast Asia",
+        "image": "/images/singapore.webp"
+      },
+      "blocks": [
+        {
+          "kind": "paragraph",
+          "runs": [
+            {
+              "text": "A place where futuristic architecture, lush tropical spaces and rich neighbourhood traditions feel perfectly at home together. Our Singapore Signature journey pairs waterfront evenings and extraordinary gardens with the food, culture and leisure experiences that make the city unforgettable."
+            }
+          ]
+        },
+        {
+          "kind": "heading",
+          "runs": [
+            {
+              "text": "Your journey, day by day"
+            }
+          ]
+        },
+        {
+          "kind": "numbered",
+          "runs": [
+            {
+              "text": "Day 1 — Arrive in Singapore. Meet your airport transfer representative, settle into your selected hotel and enjoy a relaxed first evening. Your adviser will tailor flight routing and arrival timing before booking."
+            }
+          ]
+        },
+        {
+          "kind": "numbered",
+          "runs": [
+            {
+              "text": "Day 2 — Marina Bay and the city icons. Discover the waterfront, civic precinct and celebrated skyline. Continue to Gardens by the Bay for the outdoor Supertree Grove and the planned Cloud Forest and Flower Dome experience, subject to their operating schedules."
+            }
+          ]
+        },
+        {
+          "kind": "numbered",
+          "runs": [
+            {
+              "text": "Day 3 — Heritage, flavours and discovery. Explore Chinatown and Kampong Gelam with a guide. Discover colourful streets, heritage architecture and local dining, with time to explore at your own pace."
+            }
+          ]
+        },
+        {
+          "kind": "numbered",
+          "runs": [
+            {
+              "text": "Day 4 — Sentosa Island. Enjoy a full island day with scenic coastal surroundings and leisure opportunities. Choose optional attractions or a relaxed beach afternoon to suit your travel style."
+            }
+          ]
+        },
+        {
+          "kind": "numbered",
+          "runs": [
+            {
+              "text": "Day 5 — Singapore your way. Discover Little India, the Singapore River or another favourite neighbourhood, or use the day for shopping, dining and personal experiences."
+            }
+          ]
+        },
+        {
+          "kind": "numbered",
+          "runs": [
+            {
+              "text": "Day 6 — A leisurely checkout and airport transfer for your return journey to Nigeria, according to your confirmed flight itinerary."
+            }
+          ]
+        },
+        {
+          "kind": "heading",
+          "runs": [
+            {
+              "text": "Make it your own"
+            }
+          ]
+        },
+        {
+          "kind": "bullet",
+          "runs": [
+            {
+              "text": "Choose the hotel category, preferred room arrangement and desired departure city with your travel adviser."
+            }
+          ]
+        },
+        {
+          "kind": "bullet",
+          "runs": [
+            {
+              "text": "Add family-friendly attractions, private tours, additional dining experiences or a longer stay where available."
+            }
+          ]
+        },
+        {
+          "kind": "bullet",
+          "runs": [
+            {
+              "text": "Optional admission tickets and upgraded experiences will be itemised in your personalised quotation."
+            }
+          ]
+        },
+        {
+          "kind": "heading",
+          "runs": [
+            {
+              "text": "Before you travel"
+            }
+          ]
+        },
+        {
+          "kind": "bullet",
+          "runs": [
+            {
+              "text": "Nigerian passport holders need a Singapore entry visa; application support does not guarantee visa approval."
+            }
+          ]
+        },
+        {
+          "kind": "bullet",
+          "runs": [
+            {
+              "text": "Singapore requires the free SG Arrival Card submission within three days before arrival, where applicable."
+            }
+          ]
+        },
+        {
+          "kind": "bullet",
+          "runs": [
+            {
+              "text": "Passport validity, onward/return travel documents, yellow-fever requirements and travel insurance should be checked against your individual journey."
+            }
+          ]
+        },
+        {
+          "kind": "heading",
+          "runs": [
+            {
+              "text": "A journey designed around you"
+            }
+          ]
+        },
+        {
+          "kind": "paragraph",
+          "runs": [
+            {
+              "text": "The itinerary is a proposed six-day experience, not a fixed departure or reserved airline/hotel allocation. Your Sapphire Quest adviser will confirm the exact hotel, flight itinerary, tours, inclusions and full price before payment. Admission schedules and activities may be adjusted to suit your dates."
             }
           ]
         }

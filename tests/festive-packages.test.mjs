@@ -5,17 +5,21 @@ import { readFileSync } from "node:fs";
 const read = (path) => readFileSync(new URL("../" + path, import.meta.url), "utf8");
 const packages = JSON.parse(read("src/data/festive-packages.json"));
 
-test("exactly five unique client-facing festive packages have responsible starting prices", () => {
-  assert.equal(packages.length, 5);
-  assert.equal(new Set(packages.map((p) => p.slug)).size, 5);
-  assert.deepEqual(packages.map((p) => p.destination), [
+test("five festive offers and one curated Singapore experience have responsible commercial content", () => {
+  assert.equal(packages.length, 6);
+  assert.equal(new Set(packages.map((p) => p.slug)).size, 6);
+  assert.deepEqual(packages.slice(0, 5).map((p) => p.destination), [
     "Accra, Ghana", "Nairobi, Kenya", "Zanzibar, Tanzania",
     "Dubai, United Arab Emirates", "Cape Town, South Africa",
   ]);
-  assert.deepEqual(packages.map((p) => p.priceAmount), [
+  assert.deepEqual(packages.slice(0, 5).map((p) => p.priceAmount), [
     1350000, 2650000, 3250000, 3490000, 4350000,
   ]);
-  for (const item of packages) {
+  const singapore = packages.find((p) => p.slug === "singapore-signature-city-gardens-culture");
+  assert.ok(singapore);
+  assert.equal(singapore.priceAmount, null, "Do not invent a Singapore price without a contracted supplier quote");
+  assert.equal(singapore.destination, "Singapore");
+    for (const item of packages) {
     assert.equal(item.status, "published");
     assert.equal(item.currency, "NGN");
     assert.equal(item.discountPercent, 0);

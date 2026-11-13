@@ -16,7 +16,7 @@ export async function PackageCards() {
     <section className="section-space" aria-labelledby="travel-collection-heading">
       <div className="container-wide">
         <div className="mb-10 max-w-2xl">
-          <p className="eyebrow">The festive collection · 2026/27</p>
+          <p className="eyebrow">The Sapphire Quest collection</p>
           <h2 id="travel-collection-heading" className="display-heading mt-4 text-3xl text-navy sm:text-4xl">
             Your next story starts here.
           </h2>
@@ -26,7 +26,7 @@ export async function PackageCards() {
           {packages.map((item) => (
             <article key={item.id} className="group flex min-w-0 flex-col overflow-hidden rounded-2xl border border-[#e8edf4] bg-white shadow-[0_12px_32px_-22px_rgba(7,27,60,.3)] transition-shadow hover:shadow-[0_18px_38px_-18px_rgba(7,27,60,.22)]">
               <Link href={"/packages/" + item.slug} aria-label={"View " + item.title} className="relative block aspect-[16/10] overflow-hidden bg-[#edf4fd]">
-                <PackageImage src={item.images[0]} alt={item.title} className="transition-transform duration-500 group-hover:scale-105" />
+                <PackageImage src={item.images[0] || item.details.home?.image} alt={item.title} className="transition-transform duration-500 group-hover:scale-105" />
               </Link>
               <div className="flex flex-1 flex-col p-6">
                 <p className="flex items-center gap-1.5 text-[11px] font-medium text-sapphire">

@@ -4,9 +4,9 @@ import { PageHero } from "@/components/layout/page-hero";
 import { PackageCards } from "@/features/packages/sections/package-cards";
 
 export const metadata: Metadata = {
-  title: "Curated Travel & Festive Packages",
+  title: "Curated Travel Packages",
   description:
-    "Discover Sapphire Quest festive 2026/27 travel packages from Lagos to Accra, Nairobi, Zanzibar, Dubai and Cape Town. Beautiful journeys, thoughtfully arranged.",
+    "Discover Sapphire Quest curated journeys to Singapore, Dubai, Zanzibar, Cape Town, Accra and Nairobi. Thoughtful travel experiences arranged around you.",
 };
 export const dynamic = "force-dynamic";
 
@@ -16,9 +16,9 @@ export default function Packages() {
       <PageHero
         image="/images/hero-packages.webp"
         overlay="deep"
-        eyebrow="The festive collection"
+        eyebrow="The Sapphire Quest collection"
         title="More reasons to go."
-        description="A season of unforgettable places, meaningful experiences and memories made together. Discover the escape that feels like yours."
+        description="Unforgettable places, thoughtful details and meaningful experiences. Discover your next journey with Sapphire Quest."
       />
       <PackageCards />
     </MarketingLayout>

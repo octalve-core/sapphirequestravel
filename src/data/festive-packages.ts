@@ -19,3 +19,9 @@ export const legacyDemonstrationSlugs = new Set([
   "sample-singapore-city-discovery",
   "sample-dubai-business-visit",
 ]);
+
+/** Homepage defaults for the four original image-led cards. Staff edits stored
+ * in details.home take precedence; setting enabled=false removes the card. */
+export function seededHomeFeature(slug: string) {
+  return featuredPackages.find((item) => item.slug === slug)?.details.home;
+}
