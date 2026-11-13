@@ -70,3 +70,14 @@ textarea.booking-input { min-height:88px; padding-block:12px; }
 @media (prefers-reduced-motion: reduce) {
   .mobile-nav-panel { transition: none; }
 }
+
+/* Print only the authenticated enquiry record, not navigation or editing controls. */
+@media print {
+  body:has(.enquiry-detail-print) aside,
+  body:has(.enquiry-detail-print) header.h-\[76px\],
+  body:has(.enquiry-detail-print) nav[aria-label="Breadcrumb"],
+  body:has(.enquiry-detail-print) .enquiry-detail-tools,
+  body:has(.enquiry-detail-print) .enquiry-editor-controls { display:none!important; }
+  body:has(.enquiry-detail-print) #main-content { max-width:none!important; padding:0!important; margin:0!important; }
+  body:has(.enquiry-detail-print) .enquiry-detail-print section { box-shadow:none!important; break-inside:avoid; }
+}
