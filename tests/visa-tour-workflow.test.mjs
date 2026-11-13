@@ -46,8 +46,12 @@ test("visa admin supports filters, secure export and audited staff changes",()=>
  const csv=read("src/app/api/admin/visa-enquiries/export/route.ts");
  const patch=read("src/app/api/admin/visa-enquiries/[id]/route.ts");
  assert.match(nav,/\/admin\/visa-enquiries/);
- for(const q of ['name="q"','name="status"','name="country"','name="type"','name="from"','name="to"'])
+ const shared=read("src/features/admin/components/enquiry-directory.tsx");
+ assert.match(list,/EnquiryDirectory/);
+ for(const q of ['name="country"','name="type"','name="from"','name="to"'])
    assert.ok(list.includes(q),q);
+ for(const q of ['name="q"','name="status"'])
+   assert.ok(shared.includes(q),q);
  assert.match(csv,/canManage\(staff\)/);assert.match(csv,/excelCsvRow/);
  assert.match(csv,/data.total>5000/);assert.match(csv,/private, no-store/);
  assert.match(patch,/canEdit\(staff\)/);assert.match(patch,/consentOrigin\(req\)/);

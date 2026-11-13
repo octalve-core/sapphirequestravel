@@ -59,9 +59,14 @@ test("full-width admin package pages replace inline collapsible editors", () => 
 test("package enquiry directory has filters and uses role-controlled Excel CSV", () => {
   const listing = read("src/features/admin/sections/package-enquiries-section.tsx");
   const exportApi = read("src/app/api/admin/package-enquiries/export/route.ts");
+  const shared = read("src/features/admin/components/enquiry-directory.tsx");
   assert.match(listing, /packageEnquiryOptions/);
-  for (const name of ['name="q"','name="status"','name="package"','name="from"','name="to"']) {
+  assert.match(listing, /EnquiryDirectory/);
+  for (const name of ['name="package"','name="from"','name="to"']) {
     assert.ok(listing.includes(name), name);
+  }
+  for (const name of ['name="q"','name="status"']) {
+    assert.ok(shared.includes(name),name);
   }
   assert.match(exportApi, /canManage\(staff\)/);
   assert.match(exportApi, /excelCsvRow/);
