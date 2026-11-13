@@ -4,6 +4,7 @@ import { ArrowLeft } from "lucide-react";
 import { currentStaff, canManage } from "@/server/auth";
 import { db } from "@/server/db";
 import { packageSchema, type PackageRecord } from "@/server/package-schema";
+import { seededHomeFeature } from "@/data/festive-packages";
 import { AdminShell } from "@/features/admin/components/admin-shell";
 import { PackageFields } from "@/features/admin/components/package-fields";
 
@@ -26,7 +27,16 @@ export async function FullPagePackageEditor({ id }: { id?: string }) {
           rating_source AS "ratingSource"
         FROM travel_packages WHERE id=${id} LIMIT 1
       `;
-      if (rows[0]) record = { ...packageSchema.parse(rows[0]), id: String(rows[0].id) };
+      if (rows[0]) {
+        const row = rows[0];
+        const rawDetails = row.details && typeof row.details === "object" && !Array.isArray(row.details)
+          ? row.details as Record<string, unknown> : {};
+        const seeded = seededHomeFeature(String(row.slug));
+        const hydrated = seeded && !Object.prototype.hasOwnProperty.call(rawDetails, "home")
+          ? {...row,details:{...rawDetails,home:seeded}}
+          : row;
+        record = {...packageSchema.parse(hydrated), id:String(row.id)};
+      }
     } catch { unavailable = true; }
     if (!record && !unavailable) notFound();
   }

@@ -6,6 +6,7 @@ import { db } from "@/server/db";
 import { AdminShell } from "@/features/admin/components/admin-shell";
 import { FestiveCollectionImport } from "@/features/admin/components/festive-collection-import";
 import type { PackageRecord } from "@/server/package-schema";
+import { seededHomeFeature } from "@/data/festive-packages";
 
 export async function PackagesWorkspace() {
   const staff = await currentStaff();
@@ -59,6 +60,7 @@ export async function PackagesWorkspace() {
                 <p className="mt-1 text-[11px] text-muted">/{item.slug}</p>
               </div>
               <div className="flex items-center gap-3">
+                {(item.details.home?.enabled ?? seededHomeFeature(item.slug)?.enabled) && <span className="rounded-full bg-[#edf4ff] px-3 py-1.5 text-[11px] font-medium text-sapphire">Homepage</span>}
                 <span className={"rounded-full px-3 py-1.5 text-[11px] font-medium " + (item.status === "published" ? "bg-green-50 text-green-800" : "bg-gray-100 text-gray-600")}>
                   {item.status === "published" ? "Published" : "Unpublished"}
                 </span>
