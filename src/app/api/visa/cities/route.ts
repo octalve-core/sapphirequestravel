@@ -13,8 +13,8 @@ export async function GET(req: NextRequest) {
     const response=await fetch("https://geodb-free-service.wirefreethought.com/v1/geo/cities?"+params,
       {signal:controller.signal,next:{revalidate:3600},headers:{Accept:"application/json"}});
     if(!response.ok) throw new Error("GeoDB HTTP "+response.status);
-    const json=await response.json() as {data?:{id:number;name:string;region?:string}[]};
-    const results:City[]=(json.data||[]).filter(x=>x&&Number.isInteger(x.id)&&typeof x.name==="string")
+    const json=await response.json() as {data?:{id:number;name:string;region?:string;countryCode?:string;type?:string}[]};
+    const results:City[]=(json.data||[]).filter(x=>x&&Number.isInteger(x.id)&&typeof x.name==="string"&&x.countryCode===country&&x.type==="CITY")
       .map(x=>({id:x.id,name:x.name,region:x.region})).slice(0,10);
     return NextResponse.json({results},{headers:{"Cache-Control":"public, max-age=120, s-maxage=3600"}});
   } catch {

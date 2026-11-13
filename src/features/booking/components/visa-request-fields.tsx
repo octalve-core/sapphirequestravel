@@ -59,6 +59,9 @@ function CityField({country,city,onChange,id}:{country:string;city:string;onChan
     </div>}
     {unavailable&&city.trim().length>=2&&<p className="mt-1.5 text-[11px] leading-5 text-muted">City suggestions are temporarily unavailable. Enter the city name manually; our team will confirm it.</p>}
     {!unavailable&&<p className="mt-1.5 text-[11px] leading-5 text-muted">Select a suggested city, or type the correct city if it is not listed.</p>}
+    {country&&<p className="mt-1 text-[10px] leading-5 text-muted">
+      City suggestions: <a href="https://geodb-cities-api.wirefreethought.com/" target="_blank" rel="noopener noreferrer" className="underline">GeoDB Cities</a> (GeoNames/Wikidata). Smaller towns may need manual entry.
+    </p>}
   </div>;
 }
 export function VisaRequestFields({value,onChange,idPrefix,minDate}:{

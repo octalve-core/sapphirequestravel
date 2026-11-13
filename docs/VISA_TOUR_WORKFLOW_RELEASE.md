@@ -31,3 +31,5 @@ Do NOT deploy this branch to live before migration 003 has been applied. The con
 
 ## Data preservation
 Old general and package enquiry records, URLs, company pages and packages are untouched. Only one additive migration is needed. Do not apply migration to unrelated databases.
+
+Provider disclosure: the free GeoDB service currently limits results to locations with populations of 40,000+ and to one request per second. Its API uses a CC BY 3.0 license. A small attribution link appears below the city input. Specific endpoint parameters were tested against live Lagos/NG and London/GB responses before release.
