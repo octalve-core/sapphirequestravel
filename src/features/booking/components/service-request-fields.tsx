@@ -1,6 +1,8 @@
 "use client";
 
 import { AirportCombobox } from "@/features/booking/components/airport-combobox";
+import { CityField } from "@/features/booking/components/visa-request-fields";
+import { countries } from "@/data/countries";
 import { serviceFields, type OtherService, type ServiceSelection } from "@/features/booking/lib/service-options";
 
 type Props = {
@@ -16,15 +18,43 @@ export function ServiceRequestFields({ service, value, onChange, idPrefix, minDa
   const fields = serviceFields[service];
   const set = <K extends keyof ServiceSelection>(key: K, next: ServiceSelection[K]) => onChange({ ...value, [key]: next });
   return <div className="space-y-4">
-    <AirportCombobox
-      key={`${idPrefix}-${service}-destination`}
-      id={`${idPrefix}-${service}-destination`}
-      label={fields.destinationLabel}
-      value={value.destination}
-      onChange={code => set("destination", code)}
-      placeholder="Search city, airport or IATA code"
-      helper={fields.helper}
-    />
+    {service === "corporate" ? (
+      <div className="grid gap-3 sm:grid-cols-2">
+        <div className="min-w-0">
+          <label className="booking-label" htmlFor={idPrefix + "-corporate-country"}>Destination country</label>
+          <select id={idPrefix + "-corporate-country"} required className="booking-input"
+            value={value.destinationCountryCode}
+            onChange={e => onChange({
+              ...value, destinationCountryCode: e.target.value, destinationCity: "", destination: "",
+            })}>
+            <option value="">Select destination country</option>
+            {countries.map(item => <option key={item.code} value={item.code}>{item.name}</option>)}
+          </select>
+        </div>
+        <CityField key={value.destinationCountryCode || "none"}
+          id={idPrefix + "-corporate-city"} label="Meeting / event city"
+          country={value.destinationCountryCode} city={value.destinationCity}
+          onChange={city => set("destinationCity", city)}/>
+        <div className="min-w-0 sm:col-span-2">
+          <AirportCombobox key={idPrefix + "-corporate-airport-" + value.destinationCountryCode}
+            id={idPrefix + "-corporate-airport"}
+            label="Preferred nearby airport (optional)"
+            value={value.destination} onChange={code => set("destination", code)}
+            placeholder="Search an airport near your venue"
+            required={false}/>
+        </div>
+      </div>
+    ) : (
+      <AirportCombobox
+        key={idPrefix + "-" + service + "-destination"}
+        id={idPrefix + "-" + service + "-destination"}
+        label={fields.destinationLabel}
+        value={value.destination}
+        onChange={code => set("destination", code)}
+        placeholder="Search city, airport or IATA code"
+        helper={fields.helper}
+      />
+    )}
     <div className="grid gap-3 sm:grid-cols-2 lg:grid-cols-3">
       <div className="min-w-0">
         <label className="booking-label" htmlFor={`${idPrefix}-${service}-date`}>{fields.dateLabel}</label>
