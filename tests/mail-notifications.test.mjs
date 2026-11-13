@@ -5,17 +5,18 @@ const read = path => readFileSync(new URL("../" + path, import.meta.url), "utf8"
 
 test("transactional templates use an accessible, minimal email-client-safe design", () => {
   const source = read("src/server/email-templates.ts");
-  for (const marker of ["SAPPHIRE", "QUEST", "#071c3b", "#0755db", "#c6a063",
+  for (const marker of ["Sapphire Quest", "sapphire-quest-on-dark.png", "#071c3b", "#0755db", "#c6a063",
     "<!doctype html>", "viewport", 'role="presentation"', "customerAcknowledgement", "staffEnquiryAlert"]) {
     assert.ok(source.includes(marker), marker);
   }
   assert.match(source, /Your journey begins here/);
-  assert.match(source, /New enquiry received/);
+  assert.match(source, /A new journey enquiry/);
   assert.match(source, /font-family:Arial,Helvetica,sans-serif/);
   assert.match(source, /display:none!important/);
   assert.match(source, /This email confirms receipt of your enquiry only/);
-  assert.match(source, /not a booking confirmation/);
-  assert.doesNotMatch(source, /<img src=|tracking-pixel|googleapis\.com/i);
+  assert.match(source, /not a reservation, ticket, payment receipt or visa approval/);
+  assert.match(source, /\/branding\/sapphire-quest-on-dark\.png/);
+  assert.doesNotMatch(source, /tracking-pixel|googleapis\.com|beacon\.gif/i);
 });
 
 test("input data is safely escaped and recipients are separated", () => {

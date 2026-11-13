@@ -13,8 +13,11 @@ export type NewEnquiryNotification = EnquiryMailData & { email: string };
  */
 export async function notifyNewEnquiry(input: NewEnquiryNotification): Promise<void> {
   const apiKey = process.env.RESEND_API_KEY;
-  const from = process.env.NOTIFY_FROM || "Sapphire Quest <info@sapphirequesttravel.com>";
-  if (!apiKey || !from) return;
+  const from = process.env.NOTIFY_FROM?.trim();
+  if (!apiKey || !from) {
+    console.warn("Sapphire Quest notification sending is disabled: configure RESEND_API_KEY and a verified NOTIFY_FROM.");
+    return;
+  }
 
   const to = (process.env.NOTIFY_TO || brand.email).split(",")
     .map(item => item.trim()).filter(item => /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(item)).slice(0, 5);
