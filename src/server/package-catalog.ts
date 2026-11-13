@@ -16,7 +16,8 @@ export async function publicPackageCatalog(): Promise<PackageRecord[]> {
     rows = (await sql`
       SELECT id, title, slug, summary, destination, status, highlights,
         price_amount::float AS "priceAmount", currency,
-        discount_percent AS "discountPercent", features, images, details
+        discount_percent AS "discountPercent", features, images, details,
+        rating_score::float AS "ratingScore", rating_count AS "ratingCount", rating_source AS "ratingSource"
       FROM travel_packages ORDER BY updated_at DESC LIMIT 200
     `) as Record<string, unknown>[];
   } catch {
@@ -24,12 +25,12 @@ export async function publicPackageCatalog(): Promise<PackageRecord[]> {
       // Support an older schema without altering customer or staff data.
       const sql = db();
       const oldRows = await sql`
-        SELECT id, title, slug, summary, destination, status
+        SELECT id, title, slug, summary, destination, status, highlights,
+          price_amount::float AS "priceAmount", currency,
+          discount_percent AS "discountPercent", features, images, details
         FROM travel_packages ORDER BY updated_at DESC LIMIT 200
       `;
-      rows = oldRows.map((row) => ({
-        ...emptyPackage(), ...row, details: { blocks: [] }, priceAmount: null,
-      }));
+      rows = oldRows as Record<string, unknown>[];
     } catch {
       return [...bySlug.values()];
     }

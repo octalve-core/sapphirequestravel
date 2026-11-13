@@ -22,11 +22,17 @@ export const packageSchema=z.object({
   discountPercent:z.number().int().min(0).max(90),
   features:z.array(z.string().trim().min(2).max(200)).max(20),
   images:z.array(image).max(5),
+  ratingScore:z.number().min(1).max(5).multipleOf(0.1).nullable().default(null),
+  ratingCount:z.number().int().min(0).max(1000000).default(0),
+  ratingSource:z.string().trim().max(250).default(""),
   details,
 }).superRefine((x,ctx)=>{
   if(x.status==="published" && x.summary.length<20)ctx.addIssue({code:"custom",message:"Published packages need a meaningful short summary"});
+  if ((x.ratingScore===null && (x.ratingCount!==0 || x.ratingSource)) ||
+      (x.ratingScore!==null && (x.ratingCount<1 || x.ratingSource.length<12)))
+    ctx.addIssue({code:"custom",message:"Only publish ratings backed by genuine customer feedback, with a review count and evidence source",path:["ratingScore"]});
   if(x.priceAmount===null && x.discountPercent>0)ctx.addIssue({code:"custom",message:"Add a base price before applying a discount",path:["discountPercent"]});
 });
 export type PackageInput = z.infer<typeof packageSchema>;
 export type PackageRecord = PackageInput & {id:string};
-export const emptyPackage = (): PackageInput => ({title:"",slug:"",destination:"",summary:"",highlights:"",status:"draft",priceAmount:null,currency:"NGN",discountPercent:0,features:[],images:[],details:{blocks:[{kind:"paragraph",runs:[{text:""}]}]}});
+export const emptyPackage = (): PackageInput => ({title:"",slug:"",destination:"",summary:"",highlights:"",status:"draft",priceAmount:null,currency:"NGN",discountPercent:0,features:[],images:[],ratingScore:null,ratingCount:0,ratingSource:"",details:{blocks:[{kind:"paragraph",runs:[{text:""}]}]}});
