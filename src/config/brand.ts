@@ -5,8 +5,7 @@ export const brand = {
   email: "info@sapphirequesttravel.com",
   phone: "+2349162974349",
   phoneDisplay: "+234 916 297 4349",
-  // Retain the existing deployed hostname until the new canonical domain is purchased and verified.
-  website: "https://sapphirequestravel.com",
+  website: "https://www.sapphirequesttravel.com",
   instagram: "https://instagram.com/sapphirequesttravel",
   socialHandle: "@sapphirequesttravel",
 } as const;

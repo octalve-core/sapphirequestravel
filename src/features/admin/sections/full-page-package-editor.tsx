@@ -13,6 +13,7 @@ export async function FullPagePackageEditor({ id }: { id?: string }) {
   if (!canManage(staff)) redirect("/admin/packages");
 
   let record: PackageRecord | undefined;
+  let unavailable = false;
   if (id) {
     if (!/^[0-9a-f-]{36}$/.test(id)) notFound();
     try {
@@ -26,9 +27,17 @@ export async function FullPagePackageEditor({ id }: { id?: string }) {
         FROM travel_packages WHERE id=${id} LIMIT 1
       `;
       if (rows[0]) record = { ...packageSchema.parse(rows[0]), id: String(rows[0].id) };
-    } catch { /* Fail safely without offering a misleading save. */ }
-    if (!record) notFound();
+    } catch { unavailable = true; }
+    if (!record && !unavailable) notFound();
   }
+
+  if (unavailable) return (
+    <AdminShell user={staff}>
+      <div role="alert" className="rounded-2xl border border-amber-200 bg-amber-50 p-6 text-sm text-amber-900">
+        The package editor cannot access the package database. Verify migration 002 and the database connection, then try again.
+      </div>
+    </AdminShell>
+  );
 
   return (
     <AdminShell user={staff}>
