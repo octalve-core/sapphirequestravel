@@ -37,9 +37,6 @@ export function TourRequestFields({value,onChange,idPrefix,minDate,options,loadi
     onChange(next);
   }
   return <div className="space-y-4">
-    <div className="rounded-xl bg-[#eff5ff] px-4 py-3 text-[12px] leading-6 text-[#344b6f]">
-      Choose a published Sapphire Quest experience and personalise your travel dates. You can view the itinerary without leaving this form.
-    </div>
     <div className="grid gap-3 md:grid-cols-2">
       <div className="min-w-0 md:col-span-2">
         <label className="booking-label" htmlFor={idPrefix+"-tour-package"}>Choose your tour package</label>
@@ -53,7 +50,7 @@ export function TourRequestFields({value,onChange,idPrefix,minDate,options,loadi
       {selected&&<div className="md:col-span-2 flex flex-wrap items-center justify-between gap-3 rounded-xl border border-[#d8e6f8] bg-white p-4">
         <div className="min-w-0">
           <p className="text-[12px] font-medium text-navy">{selected.title}</p>
-          <p className="mt-1 flex items-center gap-1 text-[11px] text-muted"><MapPin size={12} aria-hidden/>{selected.destination} · {selected.highlights.split("·")[0]}</p>
+          <p className="mt-1 flex items-center gap-2 text-[11px] text-muted"><MapPin size={13} className="shrink-0" aria-hidden/><span>{selected.destination} · {selected.highlights.split("·")[0]}</span></p>
           {selected.price!=null&&<p className="mt-1 text-[12px] font-medium text-sapphire">From {new Intl.NumberFormat("en-NG",{style:"currency",currency:selected.currency,maximumFractionDigits:0}).format(selected.price)} per adult sharing</p>}
         </div>
         <button type="button" className="inline-flex items-center gap-2 rounded-full border border-sapphire px-4 py-2.5 text-[12px] font-medium text-sapphire"

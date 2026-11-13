@@ -4,9 +4,9 @@ import { MapPin, LoaderCircle } from "lucide-react";
 import type { AirportSuggestion, AirportResults } from "@/server/airport-types";
 import { airports } from "@/data/airports";
 
-type Props = { label: string; value: string; onChange: (code: string) => void; id?: string; placeholder?: string; helper?: string };
+type Props = { label: string; value: string; onChange: (code: string) => void; id?: string; placeholder?: string; helper?: string; required?: boolean };
 
-export function AirportCombobox({ label, value, onChange, id, placeholder = "Search city, airport or code", helper }: Props) {
+export function AirportCombobox({ label, value, onChange, id, placeholder = "Search city, airport or code", helper, required = true }: Props) {
   const key = useId();
   const inputId = id || key;
   const [search, setSearch] = useState(() => {
@@ -53,10 +53,11 @@ export function AirportCombobox({ label, value, onChange, id, placeholder = "Sea
       <input
         id={inputId} role="combobox" aria-autocomplete="list" aria-expanded={open}
         aria-controls={`${inputId}-results`} aria-activedescendant={open && options[active] ? `${inputId}-option-${active}` : undefined}
-        aria-required="true" required autoComplete="off" spellCheck={false}
+        aria-required={required} required={required} autoComplete="off" spellCheck={false}
         className="booking-input booking-airport"
         placeholder={placeholder} value={search}
         onFocus={() => setOpen(true)}
+        onBlur={() => { if (!required && !value) setSearch(""); }}
         onChange={e => { setSearch(e.target.value); onChange(""); setOpen(true); }}
         onKeyDown={e => {
           if (e.key === "Escape") { setOpen(false); return; }

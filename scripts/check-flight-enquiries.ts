@@ -52,7 +52,7 @@ for (const entry of serviceOptions) {
     service: entry.service, name: "Test Customer", email: "customer@example.org", phone: "+234 801 111 2222",
     origin: "", destination: "SIN", departureDate: day(14), returnDate: "", travellers: 2,
     notes: "", consent: true,
-    serviceRequest: { destination: "SIN", startDate: day(14), travellers: 2, category: entry.category, organisation: entry.service === "corporate" ? "Example Limited" : "" },
+    serviceRequest: { destination: "SIN", destinationCountryCode: "SG", destinationCity: "Singapore", startDate: day(14), travellers: 2, category: entry.category, organisation: entry.service === "corporate" ? "Example Limited" : "" },
   } as const;
   const result = enquirySchema.safeParse(form);
   assert.equal(result.success, true, `${entry.service}: ${JSON.stringify(!result.success ? result.error.issues : "")}`);
@@ -64,5 +64,18 @@ for (const entry of serviceOptions) {
   assert.equal(enquirySchema.safeParse({ ...form, serviceRequest: { ...form.serviceRequest, destination: "DXB" } }).success, false);
   assert.equal(enquirySchema.safeParse({ ...form, serviceRequest: { ...form.serviceRequest, category: "unsupported" } }).success, false);
   assert.equal(enquirySchema.safeParse({ ...form, serviceRequest: { ...form.serviceRequest, startDate: day(-3) }, departureDate: day(-3) }).success, false);
+  if (entry.service === "corporate") {
+    assert.ok(summary.includes("Destination city: Singapore, Singapore"), "Corporate destination must reach staff notes");
+    assert.ok(summary.includes("Preferred nearby airport: SIN"), "Preferred airport must reach staff notes");
+    assert.equal(enquirySchema.safeParse({ ...form, serviceRequest: { ...form.serviceRequest, destinationCountryCode: "" } }).success, false);
+    assert.equal(enquirySchema.safeParse({ ...form, serviceRequest: { ...form.serviceRequest, destinationCity: "" } }).success, false);
+    assert.equal(enquirySchema.safeParse({ ...form, serviceRequest: { ...form.serviceRequest, destinationCity: "London\\nNew line" } }).success, false);
+    const withoutAirport = {
+      ...form, destination: "",
+      serviceRequest: { ...form.serviceRequest, destination: "" },
+    };
+    assert.equal(enquirySchema.safeParse(withoutAirport).success, true, "Airport should remain optional for Corporate Travel");
+    assert.equal(enquirySchema.safeParse({ ...form, serviceRequest: undefined }).success, false, "Corporate travel requires structured details");
+  }
 }
 console.log("Non-flight enquiry validation passed: visa, tours, corporate, destinations, dates and purpose.");

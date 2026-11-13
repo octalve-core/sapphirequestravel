@@ -2,7 +2,7 @@
 
 import { useEffect, useRef, useState } from "react";
 import { countries } from "@/data/countries";
-import { visaTypes, visaPurposes } from "@/server/visa-enquiry-schema";
+import { visaTypes, visaPurposes } from "@/data/visa-options";
 import { MapPin, LoaderCircle } from "lucide-react";
 
 export type VisaSelection = { countryCode:string; city:string; visaType:string; travelPurpose:string; intendedDate:string; travellers:number };
@@ -11,7 +11,7 @@ export const blankVisa = ():VisaSelection=>({
 });
 
 type City = {id:number;name:string;region?:string};
-function CityField({country,city,onChange,id}:{country:string;city:string;onChange:(v:string)=>void;id:string}){
+export function CityField({country,city,onChange,id,label="Destination city"}:{country:string;city:string;onChange:(v:string)=>void;id:string;label?:string}){
   const [results,setResults]=useState<City[]>([]);
   const [loading,setLoading]=useState(false);
   const [unavailable,setUnavailable]=useState(false);
@@ -40,14 +40,14 @@ function CityField({country,city,onChange,id}:{country:string;city:string;onChan
     return()=>{document.removeEventListener("mousedown",onDown);document.removeEventListener("keydown",onEsc);};
   },[]);
   return <div ref={root} className="relative min-w-0">
-    <label htmlFor={id} className="booking-label">Destination city</label>
+    <label htmlFor={id} className="booking-label">{label}</label>
     <div className="relative">
-      <MapPin aria-hidden size={15} className="pointer-events-none absolute left-3 top-1/2 -translate-y-1/2 text-sapphire"/>
-      <input id={id} className="booking-input pl-9" required minLength={2} maxLength={100}
+      <MapPin aria-hidden size={15} className="pointer-events-none absolute left-4 top-1/2 -translate-y-1/2 text-sapphire"/>
+      <input id={id} className="booking-input booking-location" required minLength={2} maxLength={100}
         disabled={!country} placeholder={country?"Search city (not airport)":"Choose country first"}
         value={city} autoComplete="off" onFocus={()=>setOpen(true)}
         onChange={e=>{onChange(e.target.value);setOpen(true);}}/>
-      {loading&&city.trim().length>=2&&<LoaderCircle aria-label="Searching cities" className="absolute right-3 top-3 animate-spin text-sapphire" size={16}/>}
+      {loading&&city.trim().length>=2&&<LoaderCircle aria-label="Searching cities" className="pointer-events-none absolute right-3.5 top-1/2 -translate-y-1/2 animate-spin text-sapphire" size={16}/>}
     </div>
     {open&&country&&city.trim().length>=2&&results.length>0&&<div className="absolute z-[110] mt-2 max-h-60 w-full overflow-y-auto rounded-xl border border-[#d9e5f2] bg-white p-1 shadow-xl" role="listbox" aria-label="Cities in selected country">
       {results.map(item=><button type="button" key={item.id} role="option" aria-selected={city===item.name}
@@ -58,10 +58,6 @@ function CityField({country,city,onChange,id}:{country:string;city:string;onChan
       </button>)}
     </div>}
     {unavailable&&city.trim().length>=2&&<p className="mt-1.5 text-[11px] leading-5 text-muted">City suggestions are temporarily unavailable. Enter the city name manually; our team will confirm it.</p>}
-    {!unavailable&&<p className="mt-1.5 text-[11px] leading-5 text-muted">Select a suggested city, or type the correct city if it is not listed.</p>}
-    {country&&<p className="mt-1 text-[10px] leading-5 text-muted">
-      City suggestions: <a href="https://geodb-cities-api.wirefreethought.com/" target="_blank" rel="noopener noreferrer" className="underline">GeoDB Cities</a> (GeoNames/Wikidata). Smaller towns may need manual entry.
-    </p>}
   </div>;
 }
 export function VisaRequestFields({value,onChange,idPrefix,minDate}:{

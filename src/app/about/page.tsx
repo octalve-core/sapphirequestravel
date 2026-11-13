@@ -9,6 +9,7 @@ import { FinalCTA } from "@/features/home/sections/final-cta";
 
 export const metadata: Metadata = {
   title: "About us",
+  alternates: { canonical: "/about" },
   description:
     "Get to know Sapphire Quest Travels & Tours Ltd — our mission, vision, values and a message from our Chief Executive Officer.",
 };

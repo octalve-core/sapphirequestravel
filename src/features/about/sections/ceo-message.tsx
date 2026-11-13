@@ -69,7 +69,7 @@ export function CeoMessage() {
             <p className="mt-1 text-[12px] leading-6 text-white/75">
               Chief Executive Officer
             </p>
-            <p className="text-[12px] leading-6 text-white/75">Sapphire Quest Travels &amp; Tours Ltd</p>
+            <p className="text-[12px] leading-6 text-white/75">Sapphire Quest Travel &amp; Tour Ltd</p>
           </div>
         </div>
       </div>
