@@ -8,3 +8,5 @@ node_modules/
 *.tsbuildinfo
 .DS_Store
 coverage/
+# Generated local HTML previews of transactional email templates
+.email-previews/

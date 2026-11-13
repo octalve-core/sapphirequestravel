@@ -1,4 +1,4 @@
-import { NextRequest, NextResponse } from "next/server";
+import { NextRequest, NextResponse, after } from "next/server";
 import { randomBytes } from "node:crypto";
 import { db } from "@/server/db";
 import { visaEnquirySchema } from "@/server/visa-enquiry-schema";
@@ -32,7 +32,7 @@ export async function POST(req: NextRequest) {
     )
     INSERT INTO audit_events(actor_staff_id,action,entity_type,entity_id)
     SELECT NULL,'visa_enquiry.created','visa_enquiry',id::text FROM created`;
-    await notifyNewEnquiry({reference,name:x.name,service:"Visa assistance",dashboardPath:"/admin/visa-enquiries"});
+    after(() => notifyNewEnquiry({reference,name:x.name,email:x.email,service:"Visa assistance",dashboardPath:"/admin/visa-enquiries"}));
     return NextResponse.json({ok:true,reference},{status:201,headers:{"Cache-Control":"no-store"}});
   } catch(e) {
     console.error("Visa enquiry unavailable",e instanceof Error?e.message:"unknown");
