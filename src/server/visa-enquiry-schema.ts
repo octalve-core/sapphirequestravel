@@ -1,26 +1,8 @@
 import { z } from "zod";
 import { validCountryCodes } from "@/data/countries";
+import { visaTypes, visaPurposes } from "@/data/visa-options";
+export { visaTypes, visaPurposes } from "@/data/visa-options";
 
-export const visaTypes = [
-  { value: "visitor", label: "Visitor / Tourist" },
-  { value: "business", label: "Business" },
-  { value: "student", label: "Study" },
-  { value: "work", label: "Work" },
-  { value: "family", label: "Family / Dependent" },
-  { value: "transit", label: "Transit" },
-  { value: "medical", label: "Medical" },
-  { value: "unsure", label: "Not sure — advise me" },
-] as const;
-export const visaPurposes = [
-  { value: "tourism", label: "Holiday / Tourism" },
-  { value: "family-visit", label: "Visit family or friends" },
-  { value: "business", label: "Business meetings" },
-  { value: "conference", label: "Conference / Event" },
-  { value: "study", label: "Education" },
-  { value: "employment", label: "Employment" },
-  { value: "medical", label: "Medical treatment" },
-  { value: "other", label: "Other" },
-] as const;
 const dateIsReal=(text:string)=>/^\d{4}-\d{2}-\d{2}$/.test(text) && !Number.isNaN(Date.parse(text+"T00:00:00Z")) && new Date(text+"T00:00:00Z").toISOString().slice(0,10)===text;
 export const visaEnquirySchema=z.object({
   countryCode:z.string().trim().toUpperCase().refine(c=>validCountryCodes.has(c), "Select a valid destination country."),

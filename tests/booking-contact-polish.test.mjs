@@ -98,3 +98,16 @@ test("affected marketing pages have canonical metadata, no weak origin change", 
  assert.match(c,/Strict-Transport-Security/);
  assert.match(c,/X-Permitted-Cross-Domain-Policies/);
 });
+
+test("public form keeps visa option labels out of the server-side Zod bundle", () => {
+ const visa=read("src/features/booking/components/visa-request-fields.tsx");
+ const wizard=read("src/features/booking/components/enquiry-wizard.tsx");
+ const schema=read("src/server/visa-enquiry-schema.ts");
+ const options=read("src/data/visa-options.ts");
+ assert.match(visa,/data\/visa-options/);
+ assert.match(wizard,/data\/visa-options/);
+ assert.doesNotMatch(visa,/server\/visa-enquiry-schema/);
+ assert.doesNotMatch(wizard,/server\/visa-enquiry-schema/);
+ assert.match(schema,/import \{ visaTypes, visaPurposes \} from/);
+ assert.match(options,/Visitor \/ Tourist/);
+});

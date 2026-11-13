@@ -2,7 +2,7 @@
 
 import { useEffect, useRef, useState } from "react";
 import { countries } from "@/data/countries";
-import { visaTypes, visaPurposes } from "@/server/visa-enquiry-schema";
+import { visaTypes, visaPurposes } from "@/data/visa-options";
 import { MapPin, LoaderCircle } from "lucide-react";
 
 export type VisaSelection = { countryCode:string; city:string; visaType:string; travelPurpose:string; intendedDate:string; travellers:number };

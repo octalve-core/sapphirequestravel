@@ -12,7 +12,7 @@ import { ServiceRequestFields } from "@/features/booking/components/service-requ
 import { VisaRequestFields, blankVisa, type VisaSelection } from "@/features/booking/components/visa-request-fields";
 import { TourRequestFields, blankTour, type TourSelection, type TourOption } from "@/features/booking/components/tour-request-fields";
 import { countryName, validCountryCodes } from "@/data/countries";
-import { visaTypes, visaPurposes } from "@/server/visa-enquiry-schema";
+import { visaTypes, visaPurposes } from "@/data/visa-options";
 import { serviceFields, serviceNames, isOtherService, selectionLabel, type Service, type OtherService, type ServiceSelection } from "@/features/booking/lib/service-options";
 import { Button } from "@/components/ui/button";
 
