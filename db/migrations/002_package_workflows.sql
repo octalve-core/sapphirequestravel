@@ -9,7 +9,7 @@ DO $$ BEGIN
  IF NOT EXISTS (SELECT 1 FROM pg_constraint WHERE conname='travel_packages_rating_integrity') THEN
   ALTER TABLE travel_packages ADD CONSTRAINT travel_packages_rating_integrity
    CHECK ((rating_score IS NULL AND rating_count=0 AND rating_source='')
-    OR (rating_score BETWEEN 1 AND 5 AND rating_count>0 AND length(trim(rating_source))>=12));
+    OR (rating_score IS NOT NULL AND rating_score BETWEEN 1 AND 5 AND rating_count>0 AND length(trim(rating_source))>=12));
  END IF;
 END $$;
 
