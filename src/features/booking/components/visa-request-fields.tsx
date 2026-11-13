@@ -47,7 +47,7 @@ function CityField({country,city,onChange,id}:{country:string;city:string;onChan
         disabled={!country} placeholder={country?"Search city (not airport)":"Choose country first"}
         value={city} autoComplete="off" onFocus={()=>setOpen(true)}
         onChange={e=>{onChange(e.target.value);setOpen(true);}}/>
-      {loading&&<LoaderCircle aria-label="Searching cities" className="absolute right-3 top-3 animate-spin text-sapphire" size={16}/>}
+      {loading&&city.trim().length>=2&&<LoaderCircle aria-label="Searching cities" className="absolute right-3 top-3 animate-spin text-sapphire" size={16}/>}
     </div>
     {open&&country&&city.trim().length>=2&&results.length>0&&<div className="absolute z-[110] mt-2 max-h-60 w-full overflow-y-auto rounded-xl border border-[#d9e5f2] bg-white p-1 shadow-xl" role="listbox" aria-label="Cities in selected country">
       {results.map(item=><button type="button" key={item.id} role="option" aria-selected={city===item.name}
@@ -57,7 +57,7 @@ function CityField({country,city,onChange,id}:{country:string;city:string;onChan
         {item.region&&<span className="block text-[11px] text-muted">{item.region}</span>}
       </button>)}
     </div>}
-    {unavailable&&<p className="mt-1.5 text-[11px] leading-5 text-muted">City suggestions are temporarily unavailable. Enter the city name manually; our team will confirm it.</p>}
+    {unavailable&&city.trim().length>=2&&<p className="mt-1.5 text-[11px] leading-5 text-muted">City suggestions are temporarily unavailable. Enter the city name manually; our team will confirm it.</p>}
     {!unavailable&&<p className="mt-1.5 text-[11px] leading-5 text-muted">Select a suggested city, or type the correct city if it is not listed.</p>}
   </div>;
 }

@@ -26,7 +26,7 @@ export async function VisaEnquiriesSection({searchParams}:{
       <div>
         <p className="eyebrow">Visa operations</p>
         <h1 className="display-heading mt-3 text-3xl text-navy">Visa enquiries</h1>
-        <p className="mt-3 max-w-2xl text-sm leading-7 text-muted">Manage visa requests separately from flights, corporate journeys and package bookings.</p>
+        <p className="mt-3 max-w-2xl text-sm leading-7 text-muted">Manage visa requests separately from flights, corporate journeys and package bookings. Earlier visa enquiries submitted through the previous form remain accessible under General Enquiries.</p>
       </div>
       {canManage(staff)&&!error&&<a href={"/api/admin/visa-enquiries/export"+(query?"?"+query:"")}
         className="inline-flex min-h-11 items-center gap-2 rounded-full bg-sapphire px-5 text-[12px] font-medium text-white">

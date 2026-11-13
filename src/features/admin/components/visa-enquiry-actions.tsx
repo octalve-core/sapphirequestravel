@@ -5,7 +5,7 @@ import { useRouter } from "next/navigation";
 import { Save } from "lucide-react";
 import { visaStatusValues } from "@/server/visa-enquiry-schema";
 import type { VisaStatus } from "@/server/visa-enquiry-data";
-import { packageStatusLabels } from "@/features/admin/lib/package-status";
+import { packageStatusLabels } from "@/features/admin/lib/visa-status";
 
 type StaffOption = { id: string; name: string };
 
@@ -58,18 +58,18 @@ export function VisaEnquiryActions({
         <p className="mt-2 text-xs leading-6 text-muted">Keep your team informed with statuses, assignments and private notes.</p>
       </div>
       <div>
-        <label htmlFor="package-status" className="label-field">Status</label>
+        <label htmlFor="visa-status" className="label-field">Status</label>
         <div className="mt-2 flex flex-wrap gap-2">
-          <select id="package-status" className="input-field min-w-0 flex-1" value={status} onChange={e=>setStatus(e.target.value as VisaStatus)}>
+          <select id="visa-status" className="input-field min-w-0 flex-1" value={status} onChange={e=>setStatus(e.target.value as VisaStatus)}>
             {visaStatusValues.map(v=><option key={v} value={v}>{packageStatusLabels[v]}</option>)}
           </select>
           <button type="button" disabled={busy} onClick={()=>void change({action:"status",status})} className="rounded-lg bg-sapphire px-4 text-xs font-medium text-white disabled:opacity-50">Update</button>
         </div>
       </div>
       <div>
-        <label htmlFor="package-assignee" className="label-field">Assigned team member</label>
+        <label htmlFor="visa-assignee" className="label-field">Assigned team member</label>
         <div className="mt-2 flex flex-wrap gap-2">
-          <select id="package-assignee" className="input-field min-w-0 flex-1" value={assigned} onChange={e=>setAssigned(e.target.value)}>
+          <select id="visa-assignee" className="input-field min-w-0 flex-1" value={assigned} onChange={e=>setAssigned(e.target.value)}>
             <option value="">Unassigned</option>
             {assignees.map(person=><option key={person.id} value={person.id}>{person.name}</option>)}
           </select>
@@ -77,8 +77,8 @@ export function VisaEnquiryActions({
         </div>
       </div>
       <form onSubmit={noteSubmit} className="space-y-3 border-t border-[#e9edf4] pt-5">
-        <label htmlFor="package-note" className="label-field">Add private note</label>
-        <textarea id="package-note" required minLength={2} maxLength={2000} rows={4} className="input-field resize-y py-3" value={note} onChange={e=>setNote(e.target.value)} placeholder="Call outcome, client preferences, supplier quote or next steps..."/>
+        <label htmlFor="visa-note" className="label-field">Add private note</label>
+        <textarea id="visa-note" required minLength={2} maxLength={2000} rows={4} className="input-field resize-y py-3" value={note} onChange={e=>setNote(e.target.value)} placeholder="Call outcome, client preferences, supplier quote or next steps..."/>
         <button type="submit" disabled={busy||note.trim().length<2} className="inline-flex min-h-11 items-center gap-2 rounded-lg bg-sapphire px-5 text-xs font-medium text-white disabled:opacity-50">
           <Save size={15}/> Save note
         </button>
