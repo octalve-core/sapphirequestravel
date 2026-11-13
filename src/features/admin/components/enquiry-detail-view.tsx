@@ -152,7 +152,7 @@ export function EnquiryDetailView({ enquiry: e, events, agents, editable }: {
           <span className="grid size-10 place-items-center rounded-xl bg-[#eaf3ff] text-sapphire"><SlidersHorizontal size={20} aria-hidden="true"/></span>
           <h2 id="manage-heading" className="text-[16px] font-medium text-navy">Enquiry management</h2>
         </div>
-        <EnquiryActions id={e.id} status={e.status} assignedTo={e.assigned_to} agents={agents} editable={editable}/>
+        <EnquiryActions id={e.id} email={e.email} phone={e.phone} status={e.status} assignedTo={e.assigned_to} agents={agents} editable={editable}/>
         <div className="mt-7 border-t border-[#e7edf5] pt-6">
           <h3 className="mb-5 inline-flex items-center gap-2 text-[14px] font-medium text-navy"><Clock3 size={18} className="text-sapphire"/>Activity history</h3>
           <ol className="relative ml-2 space-y-6 border-l-2 border-[#dce8f9] pl-6">
