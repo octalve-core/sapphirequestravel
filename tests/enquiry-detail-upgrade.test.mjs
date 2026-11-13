@@ -78,3 +78,15 @@ test("screens respect real privacy, no fake booking/quotation functionality",()=
   assert.match(actions,/safePhone/);
   assert.doesNotMatch(view+actions,/Convert to booking|Create quotation|fake data|demo itinerary/i);
 });
+
+test("record header copy and print buttons perform real browser actions",()=>{
+  const tools=read("src/features/admin/components/enquiry-detail-tools.tsx");
+  const view=read("src/features/admin/components/enquiry-detail-view.tsx");
+  const css=read("src/app/globals.css");
+  assert.match(view,/EnquiryDetailTools reference=\{e\.reference\}/);
+  assert.match(tools,/navigator\.clipboard\.writeText\(reference\)/);
+  assert.match(tools,/window\.print\(\)/);
+  assert.match(tools,/role="alert"/);
+  assert.match(css,/@media print/);
+  assert.match(css,/enquiry-detail-print/);
+});
