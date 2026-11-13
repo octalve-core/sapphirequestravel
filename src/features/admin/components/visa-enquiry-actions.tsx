@@ -5,7 +5,7 @@ import { useRouter } from "next/navigation";
 import { Save } from "lucide-react";
 import { visaStatusValues } from "@/server/visa-enquiry-schema";
 import type { VisaStatus } from "@/server/visa-enquiry-data";
-import { packageStatusLabels } from "@/features/admin/lib/visa-status";
+import { packageStatusLabels } from "@/features/admin/lib/package-status";
 
 type StaffOption = { id: string; name: string };
 
