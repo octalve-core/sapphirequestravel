@@ -16,7 +16,7 @@ const image = z.string().trim().max(600).refine((value) => {
   }
   try {
     const url = new URL(value);
-    return url.protocol === "https:" && Boolean(url.hostname);
+    return url.protocol==="https:" && Boolean(url.hostname);
   } catch {
     return false;
   }
