@@ -41,7 +41,8 @@ test("public package submissions are protected, persisted and notified separatel
   assert.match(api, /findPublicPackage/);
   assert.match(api, /INSERT INTO package_enquiries/);
   assert.match(api, /package_enquiry_events/);
-  assert.match(api, /await notifyNewEnquiry/);
+  assert.match(api, /after\(\(\) => notifyNewEnquiry/);
+  assert.match(api, /email: data\.email/);
   assert.match(api, /dashboardPath: "\/admin\/package-enquiries"/);
 });
 test("full-width admin package pages replace inline collapsible editors", () => {

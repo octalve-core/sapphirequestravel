@@ -1,4 +1,4 @@
-import { NextRequest, NextResponse } from "next/server";
+import { NextRequest, NextResponse, after } from "next/server";
 import { randomBytes } from "node:crypto";
 import { db } from "@/server/db";
 import { consumeRateLimit, consentOrigin, requestIp } from "@/server/security";
@@ -26,7 +26,7 @@ export async function POST(req: NextRequest) {
       RETURNING id
     ) INSERT INTO enquiry_events(enquiry_id,event_type,content)
       SELECT id,'created','Customer submitted enquiry' FROM created`;
-    await notifyNewEnquiry({ reference, name: x.name, service: x.service });
+    after(() => notifyNewEnquiry({ reference, name: x.name, email: x.email, service: x.service }));
     return NextResponse.json({ ok: true, reference }, { status: 201, headers: { "Cache-Control": "no-store" } });
   } catch (error) {
     console.error("Enquiry submission unavailable", error instanceof Error ? error.message : "unknown");

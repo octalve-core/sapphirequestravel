@@ -1,4 +1,4 @@
-import { NextRequest, NextResponse } from "next/server";
+import { NextRequest, NextResponse, after } from "next/server";
 import { randomBytes } from "node:crypto";
 import { db } from "@/server/db";
 import { findPublicPackage } from "@/server/package-catalog";
@@ -52,10 +52,10 @@ export async function POST(req: NextRequest, { params }: { params: Promise<{ slu
       INSERT INTO audit_events(actor_staff_id,action,entity_type,entity_id)
       SELECT NULL,'package_enquiry.created','package_enquiry',id::text FROM created
     `;
-    await notifyNewEnquiry({
-      reference, name: data.name, service: "Package: " + item.title,
+    after(() => notifyNewEnquiry({
+      reference, name: data.name, email: data.email, service: "Package: " + item.title,
       dashboardPath: "/admin/package-enquiries",
-    });
+    }));
     return NextResponse.json({ reference }, { status: 201, headers: { "Cache-Control": "no-store" } });
   } catch (error) {
     console.error("Package enquiry unavailable", error instanceof Error ? error.message : "unknown");
