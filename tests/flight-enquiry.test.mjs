@@ -73,7 +73,9 @@ test('booking layout uses compact controls and a separate swap column', () => {
 });
 
 test('agent dashboard presents destination and planned date for non-flight enquiries', () => {
- const view = read('src/features/admin/sections/enquiry-detail-section.tsx');
+ const view = read('src/features/admin/components/enquiry-detail-view.tsx');
+ const loader = read('src/features/admin/sections/enquiry-detail-section.tsx');
+ assert.match(loader, /EnquiryDetailView/);
  assert.match(view, /Destination airport/);
  assert.match(view, /Preferred travel date/);
  assert.match(view, /Travel details and notes/);
