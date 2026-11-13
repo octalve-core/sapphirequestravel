@@ -57,6 +57,7 @@ export function AirportCombobox({ label, value, onChange, id, placeholder = "Sea
         className="booking-input booking-airport"
         placeholder={placeholder} value={search}
         onFocus={() => setOpen(true)}
+        onBlur={() => { if (!required && !value) setSearch(""); }}
         onChange={e => { setSearch(e.target.value); onChange(""); setOpen(true); }}
         onKeyDown={e => {
           if (e.key === "Escape") { setOpen(false); return; }

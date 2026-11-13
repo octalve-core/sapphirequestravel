@@ -34,7 +34,7 @@ export function ServiceRequestFields({ service, value, onChange, idPrefix, minDa
         <CityField key={value.destinationCountryCode || "none"}
           id={idPrefix + "-corporate-city"} label="Meeting / event city"
           country={value.destinationCountryCode} city={value.destinationCity}
-          onChange={city => set("destinationCity", city)}/>
+          onChange={city => onChange({ ...value, destinationCity: city, destination: "" })}/>
         <div className="min-w-0 sm:col-span-2">
           <AirportCombobox key={idPrefix + "-corporate-airport-" + value.destinationCountryCode}
             id={idPrefix + "-corporate-airport"}
