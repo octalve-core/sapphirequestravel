@@ -18,7 +18,7 @@ function CityField({country,city,onChange,id}:{country:string;city:string;onChan
   const [open,setOpen]=useState(false);
   const root=useRef<HTMLDivElement>(null);
   useEffect(()=>{
-    if(!country || city.trim().length<2){setResults([]);setUnavailable(false);return;}
+    if(!country || city.trim().length<2)return;
     const controller=new AbortController();
     const timeout=setTimeout(async()=>{
       setLoading(true);
@@ -49,7 +49,7 @@ function CityField({country,city,onChange,id}:{country:string;city:string;onChan
         onChange={e=>{onChange(e.target.value);setOpen(true);}}/>
       {loading&&<LoaderCircle aria-label="Searching cities" className="absolute right-3 top-3 animate-spin text-sapphire" size={16}/>}
     </div>
-    {open&&country&&results.length>0&&<div className="absolute z-[110] mt-2 max-h-60 w-full overflow-y-auto rounded-xl border border-[#d9e5f2] bg-white p-1 shadow-xl" role="listbox" aria-label="Cities in selected country">
+    {open&&country&&city.trim().length>=2&&results.length>0&&<div className="absolute z-[110] mt-2 max-h-60 w-full overflow-y-auto rounded-xl border border-[#d9e5f2] bg-white p-1 shadow-xl" role="listbox" aria-label="Cities in selected country">
       {results.map(item=><button type="button" key={item.id} role="option" aria-selected={city===item.name}
         onMouseDown={e=>e.preventDefault()} onClick={()=>{onChange(item.name);setOpen(false);}}
         className="block w-full rounded-lg px-3 py-2 text-left text-[13px] hover:bg-[#eef5ff]">

@@ -100,12 +100,11 @@ export function EnquiryWizard({ initial = {}, embedded = false }: { initial?: En
   const [visa, setVisa] = useState<VisaSelection>(()=>blankVisa());
   const [tour, setTour] = useState<TourSelection>(()=>blankTour(initial.packageSlug||""));
   const [tourPackages,setTourPackages] = useState<TourOption[]>([]);
-  const [tourLoading,setTourLoading] = useState(false);
+  const [tourLoading,setTourLoading] = useState(initial.service==="holiday");
   const [tourError,setTourError] = useState("");
   useEffect(()=>{
     if(service!=="holiday")return;
     const controller=new AbortController();
-    setTourLoading(true);setTourError("");
     fetch("/api/packages/options",{signal:controller.signal})
       .then(async response=>{if(!response.ok)throw new Error("Packages unavailable");return response.json() as Promise<{packages:TourOption[]}>;})
       .then(result=>{if(!controller.signal.aborted){setTourPackages(result.packages||[]);if(!result.packages?.length)setTourError("Our tours are temporarily unavailable. Please contact our team.");}})
@@ -132,7 +131,7 @@ export function EnquiryWizard({ initial = {}, embedded = false }: { initial?: En
   const updateContact = <K extends keyof typeof contact>(key: K, value: (typeof contact)[K]) => setContact(p => ({ ...p, [key]: value }));
   const updateLeg = (id: number, key: "origin" | "destination" | "date", value: string) => setLegs(p => p.map(item => item.id === id ? { ...item, [key]: value } : item));
   const swapLeg = (id: number) => setLegs(p => p.map(item => item.id === id ? { ...item, origin: item.destination, destination: item.origin, swapRevision: item.swapRevision + 1 } : item));
-  const changeService = (value: Service) => { setService(value); setStep(1); setError(""); };
+  const changeService = (value: Service) => { setService(value); setStep(1); setError(""); if(value==="holiday"){setTourLoading(true);setTourError("");} };
   function changeJourney(value: Journey) {
     setJourney(value); setError("");
     if (value === "multi-city" && legs.length < 2) setLegs(p => [...p, { id: idCounter.current++, origin: p[0].destination, destination: "", date: "", swapRevision: 0 }]);
