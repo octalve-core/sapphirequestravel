@@ -1,7 +1,7 @@
 import "server-only";
 import { brand } from "@/config/brand";
 /** Best-effort internal notification. Enquiry persistence must not depend on mail delivery. */
-export async function notifyNewEnquiry(input:{reference:string,name:string,service:string,dashboardPath?:"/admin/package-enquiries"}){
+export async function notifyNewEnquiry(input:{reference:string,name:string,service:string,dashboardPath?:"/admin/package-enquiries"|"/admin/visa-enquiries"}){
  const apiKey=process.env.RESEND_API_KEY;
  if(!apiKey)return;
  const to=process.env.NOTIFY_TO??brand.email;
