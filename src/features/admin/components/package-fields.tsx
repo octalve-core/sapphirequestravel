@@ -14,7 +14,7 @@ export function PackageFields({initial,id,onSaved}:{initial?:PackageInput;id?:st
  async function save(e:FormEvent){e.preventDefault();setBusy(true);setMessage("");try{
   const r=await fetch(id?`/api/admin/packages/${id}`:"/api/admin/packages",{method:id?"PATCH":"POST",headers:{"Content-Type":"application/json"},body:JSON.stringify(form)});
   const data:{error?:string,ok?:boolean}=await r.json();if(!r.ok||!data.ok){setMessage(data.error||"Unable to save. Check the fields and database migration.");return}
-  setMessage(id?"Package updated":"Draft package created");if(!id){setForm(emptyPackage());setSlugEdited(false);setEditorReset(x=>x+1)}onSaved?.();router.refresh();
+  setMessage(id?"Package updated":"Package created");if(!id){setForm(emptyPackage());setSlugEdited(false);setEditorReset(x=>x+1);router.push("/admin/packages");}onSaved?.();router.refresh();
  }catch{setMessage("Network error. Check your connection.")}finally{setBusy(false)}}
  return <form onSubmit={save} className="space-y-6">
   <div className="grid gap-4 sm:grid-cols-2">
