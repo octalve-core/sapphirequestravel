@@ -3,6 +3,8 @@ export type Service = "flight" | "visa" | "holiday" | "corporate";
 export type OtherService = Exclude<Service, "flight">;
 export type ServiceSelection = {
   destination: string;
+  destinationCountryCode: string;
+  destinationCity: string;
   startDate: string;
   travellers: number;
   category: string;
@@ -47,7 +49,7 @@ export const serviceFields: Record<OtherService, {
     destinationLabel: "Travel destination",
     dateLabel: "Preferred travel date",
     categoryLabel: "Travel type",
-    helper: "Choose the nearest airport to the meeting or event destination.",
+    helper: "",
     categories: [
       { value: "conference", label: "Conference or event" },
       { value: "delegation", label: "Delegation" },

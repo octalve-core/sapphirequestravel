@@ -1,5 +1,6 @@
 import { z } from "zod";
 import { serviceFields, serviceNames, selectionLabel, type OtherService } from "@/features/booking/lib/service-options";
+import { validCountryCodes, countryName } from "@/data/countries";
 
 function isRealISODate(value: string) {
   if (!/^\d{4}-\d{2}-\d{2}$/.test(value)) return false;
@@ -19,7 +20,9 @@ export const flightRequestSchema = z.object({
 });
 export type FlightRequest = z.infer<typeof flightRequestSchema>;
 export const serviceRequestSchema = z.object({
-  destination: airport,
+  destination: z.string().trim().toUpperCase().regex(/^(?:[A-Z]{3})?$/, "Select an airport from the suggestions or leave it blank"),
+  destinationCountryCode: z.string().trim().toUpperCase().max(2).default(""),
+  destinationCity: z.string().trim().max(100).default(""),
   startDate: z.string().max(10),
   travellers: z.number().int().min(1).max(30),
   category: z.string().trim().min(2).max(50),
@@ -48,12 +51,20 @@ export const enquirySchema = z.object({
     if (v.flightRequest) add("Flight details only apply to flight requests", ["flightRequest"]);
     const request = v.serviceRequest;
     if (request) {
+      if (v.service === "corporate") {
+        if (!validCountryCodes.has(request.destinationCountryCode))
+          add("Select the destination country", ["serviceRequest", "destinationCountryCode"]);
+        if (request.destinationCity.length < 2 ||
+            !/^[\p{L}\p{M}\p{N} .,'-]{2,100}$/u.test(request.destinationCity))
+          add("Enter a valid destination city", ["serviceRequest", "destinationCity"]);
+      }
       const category = serviceFields[v.service].categories;
       if (!category.some(item => item.value === request.category)) add("Please select a valid travel purpose or style", ["serviceRequest", "category"]);
       if (!isRealISODate(request.startDate) || request.startDate < new Date().toISOString().slice(0, 10)) add("Please choose a valid future date", ["serviceRequest", "startDate"]);
       if (v.destination !== request.destination || v.departureDate !== request.startDate || v.travellers !== request.travellers) add("The submitted travel details do not match", ["serviceRequest"]);
       if (v.service !== "corporate" && request.organisation) add("Organisation is only available for corporate travel", ["serviceRequest", "organisation"]);
-    } else if (v.notes.trim().length < 6) add("Please describe your travel requirements", ["notes"]);
+    } else if (v.service === "corporate") add("Complete the corporate travel details", ["serviceRequest"]);
+    else if (v.notes.trim().length < 6) add("Please describe your travel requirements", ["notes"]);
     return;
   }
   if (v.serviceRequest) add("This service selection is not a flight request", ["serviceRequest"]);
@@ -98,7 +109,10 @@ export function enquiryNotes(x: EnquiryInput): string {
     const service = x.service as OtherService;
     const lines = [
       `${serviceNames[service].toUpperCase()} ENQUIRY — customer-selected details`,
-      `Destination airport: ${selection.destination}`,
+      ...(service === "corporate" ? [
+        "Destination city: " + selection.destinationCity + ", " + countryName(selection.destinationCountryCode),
+        "Preferred nearby airport: " + (selection.destination || "Travel team to advise"),
+      ] : ["Destination airport: " + selection.destination]),
       `Preferred travel date: ${selection.startDate}`,
       `Travellers: ${selection.travellers}`,
       `${serviceFields[service].categoryLabel}: ${selectionLabel(service, selection.category)}`,

@@ -46,7 +46,7 @@ const isDate = (date: string) => /^\d{4}-\d{2}-\d{2}$/.test(date) && !Number.isN
 const count = (p: Passengers) => p.adults + p.children + p.infants;
 const maxLegs = 5;
 const createSelection = (service: OtherService, destination = "", startDate = "", travellers = 1): ServiceSelection => ({
-  destination, startDate, travellers, category: serviceFields[service].categories[0].value,
+  destination, destinationCountryCode: "", destinationCity: "", startDate, travellers, category: serviceFields[service].categories[0].value,
 });
 
 function PassengerPicker({ value, onChange }: { value: Passengers; onChange: (p: Passengers) => void }) {
@@ -159,7 +159,13 @@ export function EnquiryWizard({ initial = {}, embedded = false }: { initial?: En
     }
     if (service !== "flight") {
       const x = other[service];
-      if (!/^[A-Z]{3}$/.test(x.destination)) return "Choose a destination from the airport suggestions.";
+      if (service === "corporate") {
+        if (!validCountryCodes.has(x.destinationCountryCode)) return "Choose the destination country.";
+        if (x.destinationCity.trim().length < 2) return "Enter the meeting or event city.";
+        if (x.destination && !/^[A-Z]{3}$/.test(x.destination)) return "Choose a valid airport or leave the airport field blank.";
+      } else if (!/^[A-Z]{3}$/.test(x.destination)) {
+        return "Choose a destination from the airport suggestions.";
+      }
       if (!isDate(x.startDate) || x.startDate < today()) return "Choose a valid future travel date.";
       if (!Number.isInteger(x.travellers) || x.travellers < 1 || x.travellers > 30) return "Select the number of travellers.";
       if (!serviceFields[service].categories.some(opt => opt.value === x.category)) return "Choose a travel purpose or style.";
@@ -288,7 +294,7 @@ export function EnquiryWizard({ initial = {}, embedded = false }: { initial?: En
               <p><span className="font-semibold text-navy">{visa.city}, {countryName(visa.countryCode)}</span> · {visa.intendedDate} · {visa.travellers} travellers · {visaTypes.find(x=>x.value===visa.visaType)?.label} · {visaPurposes.find(x=>x.value===visa.travelPurpose)?.label}</p> :
               service==="holiday" ?
               <p><span className="font-semibold text-navy">{tourPackages.find(x=>x.slug===tour.slug)?.title}</span> · {tour.startDate} · {tour.adults+tour.children+tour.infants} travellers · From {tour.departureCity}</p> :
-              <p><span className="font-semibold text-navy">{other.corporate.destination}</span> · {other.corporate.startDate} · {other.corporate.travellers} travellers · {selectionLabel("corporate",other.corporate.category)}</p>}
+              <p><span className="font-semibold text-navy">{other.corporate.destinationCity}, {countryName(other.corporate.destinationCountryCode)}</span> · {other.corporate.startDate} · {other.corporate.travellers} travellers · {selectionLabel("corporate",other.corporate.category)}{other.corporate.destination ? " · Airport: " + other.corporate.destination : ""}</p>}
           </div>
           <div className="grid gap-3 sm:grid-cols-2">
             <div><label className="booking-label" htmlFor={`${prefix}-contact-name`}>Full name</label><input id={`${prefix}-contact-name`} required minLength={2} maxLength={100} autoComplete="name" className="booking-input" value={contact.name} onChange={e => updateContact("name", e.target.value)}/></div>
