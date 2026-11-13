@@ -58,7 +58,7 @@ export function EnquiryActions({ id, status, editable, agents, assignedTo, email
     }
   }
 
-  return <div className="space-y-5">
+  return <div className="enquiry-editor-controls space-y-5">
     <div>
       <label htmlFor="enquiry-status" className="mb-2 block text-[12px] font-medium text-[#354964]">Status</label>
       <select id="enquiry-status" className="input-field min-h-11 text-[13px]"

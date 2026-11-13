@@ -9,6 +9,7 @@ import { describeAirport, airportDisplay } from "@/server/airport-lookup";
 import { parseFlightDetails } from "@/features/admin/lib/enquiry-itinerary";
 import { StatusBadge } from "@/features/admin/components/status-badge";
 import { EnquiryActions } from "@/features/admin/components/enquiry-actions";
+import { EnquiryDetailTools } from "@/features/admin/components/enquiry-detail-tools";
 
 export type EnquiryEvent = {
   id: string; event_type: string; content: string; created_at: string; actor: string | null;
@@ -44,7 +45,7 @@ export function EnquiryDetailView({ enquiry: e, events, agents, editable }: {
        details.infants ? details.infants + " infants" : ""].filter(Boolean).join(" · ");
   const tel = e.phone.replace(/[^\d+]/g, "");
   const email = /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(e.email) ? e.email : null;
-  return <div className="space-y-7">
+  return <div className="enquiry-detail-print space-y-7">
     <nav aria-label="Breadcrumb" className="flex flex-wrap items-center gap-2 text-[12px] text-[#6a7990]">
       <Link href="/admin" className="inline-flex items-center gap-2 hover:text-sapphire">
         <Home size={16} aria-hidden="true"/> Operations dashboard
@@ -66,9 +67,12 @@ export function EnquiryDetailView({ enquiry: e, events, agents, editable }: {
           <span className="inline-flex items-center gap-2"><ClipboardList size={15} aria-hidden="true"/>{services[e.service] || e.service}</span>
         </div>
       </div>
-      <Link href="/admin/enquiries" className="inline-flex min-h-10 items-center gap-2 rounded-xl border border-[#d9e4f2] bg-white px-4 text-[12px] font-medium text-[#385377] hover:border-sapphire hover:text-sapphire">
-        <ArrowLeft size={15} aria-hidden="true"/> All enquiries
-      </Link>
+      <div className="flex flex-wrap items-center gap-2">
+        <EnquiryDetailTools reference={e.reference}/>
+        <Link href="/admin/enquiries" className="inline-flex min-h-10 items-center gap-2 rounded-xl border border-[#d9e4f2] bg-white px-4 text-[12px] font-medium text-[#385377] hover:border-sapphire hover:text-sapphire print:hidden">
+          <ArrowLeft size={15} aria-hidden="true"/> All enquiries
+        </Link>
+      </div>
     </header>
 
     <div className="grid items-start gap-5 xl:grid-cols-[minmax(0,1.45fr)_minmax(330px,.92fr)]">
