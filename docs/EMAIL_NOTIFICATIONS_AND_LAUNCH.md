@@ -6,6 +6,8 @@ GitHub repository: octalve-core/sapphirequestravel
 
 ## Email design and security
 
+To review the real customer and staff templates before enabling mail, run from the project root: pnpm exec tsx scripts/render-email-previews.ts. Open the two HTML files in the .email-previews directory in Firefox or Chrome. No API key or email sending is involved.
+
 Implemented in src/server/email-templates.ts:
 - Customer acknowledgement: premium light 600px layout with navy header, sapphire button, gold accent, reference number and receipt status. Plain text alternative; no images, third-party tracking or remote fonts. Explains that this is not a booking, ticket or visa approval.
 - Staff alert: a separate message containing the reference, customer name and service only; linked to the authenticated General, Package or Visa Enquiries dashboard. Does not copy full itinerary or contact fields into email.
