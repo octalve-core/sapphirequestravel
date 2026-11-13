@@ -23,6 +23,14 @@ export function PrivacyDetails() {
           shared with airlines, accommodation partners or other travel providers with
           appropriate notice and, where required, your consent. We do not sell enquiry data.
         </p>
+        <h2 className="text-xl font-medium text-navy">Destination search data</h2>
+        <p>
+          City suggestions used in our visa and corporate travel forms are powered by{" "}
+          <a href="https://geodb-cities-api.wirefreethought.com/" target="_blank" rel="noopener noreferrer" className="text-sapphire underline">GeoDB Cities</a>,
+          using place data from GeoNames and Wikidata. GeoDB is licensed under{" "}
+          <a href="https://creativecommons.org/licenses/by/3.0/" target="_blank" rel="noopener noreferrer" className="text-sapphire underline">Creative Commons Attribution 3.0</a>.
+          Suggestions may not include smaller towns; our travel team will confirm your destination.
+        </p>
         <h2 className="text-xl font-medium text-navy">Security and your choices</h2>
         <p>
           Our staff workspace uses access controls and essential session cookies. We retain

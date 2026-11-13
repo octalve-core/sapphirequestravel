@@ -34,7 +34,10 @@ button { cursor:pointer; }
 .booking-input::placeholder { color:#8a98ae; }
 .booking-input:focus { outline:2px solid #9ec6ff; border-color:#0755db; outline-offset:1px; }
 .booking-input:disabled { background:#f3f6fa; color:#7b879b; }
-.booking-input.booking-airport { padding-left:41px; padding-right:34px; }
+.booking-input.booking-airport { padding-left:43px; padding-right:36px; }
+.booking-input.booking-location { padding-left:46px; padding-right:38px; }
+.booking-location:disabled { cursor:not-allowed; }
+@media(max-width:639px){ .booking-input.booking-location { padding-left:44px; } }
 textarea.booking-input { min-height:88px; padding-block:12px; }
 
 
