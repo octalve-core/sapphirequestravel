@@ -26,7 +26,7 @@ export function readVisaFilters(input:Record<string,string|string[]|undefined>):
 }
 export function visaFilterQuery(f:VisaFilters,page=f.page){
  const q=new URLSearchParams();
- for(const [key,value] of Object.entries(f))if(key!=="page"&&value&&value!=="all")q.set(key,value);
+ for(const [key,value] of Object.entries(f))if(key!=="page"&&value&&value!=="all")q.set(key,String(value));
  if(page>1)q.set("page",String(page));
  return q.toString();
 }
