@@ -1,5 +1,6 @@
 import "server-only";
 import { db } from "@/server/db";
+import { safeFilterDate } from "@/server/date-filter";
 import { visaStatusValues } from "@/server/visa-enquiry-schema";
 export type VisaStatus=(typeof visaStatusValues)[number];
 export type VisaEnquiryRow={
@@ -19,8 +20,8 @@ export function readVisaFilters(input:Record<string,string|string[]|undefined>):
    status:status==="all"||visaStatusValues.some(x=>x===status)?status as VisaFilters["status"]:"all",
    country:/^[A-Z]{2}$/.test(country)?country:"",
    type:/^[a-z-]{0,30}$/.test(type)?type:"",
-   from:/^\d{4}-\d{2}-\d{2}$/.test(get("from"))?get("from"):"",
-   to:/^\d{4}-\d{2}-\d{2}$/.test(get("to"))?get("to"):"",
+   from:safeFilterDate(get("from")),
+   to:safeFilterDate(get("to")),
    page:Math.min(Math.max(Number.parseInt(get("page")||"1",10)||1,1),100000),
  };
 }

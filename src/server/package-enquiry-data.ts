@@ -1,5 +1,6 @@
 import "server-only";
 import { db } from "@/server/db";
+import { safeFilterDate } from "@/server/date-filter";
 import type { PackageEnquiryFilters, PackageEnquiryStatus } from "@/server/package-enquiry-schema";
 
 export type PackageEnquiryRow = {
@@ -34,8 +35,8 @@ export function makePackageFilters(input: Record<string, string | string[] | und
     status: ["all", "new", "contacted", "quoted", "follow_up", "confirmed", "closed"].includes(status)
       ? status as PackageEnquiryFilters["status"] : "all",
     package: /^[a-z0-9-]{0,130}$/.test(first("package") || "") ? first("package") || "" : "",
-    from: /^\d{4}-\d{2}-\d{2}$/.test(first("from") || "") ? first("from") || "" : "",
-    to: /^\d{4}-\d{2}-\d{2}$/.test(first("to") || "") ? first("to") || "" : "",
+    from: safeFilterDate(first("from")),
+    to: safeFilterDate(first("to")),
     page: Math.min(Math.max(Number.parseInt(first("page") || "1", 10) || 1, 1), 100000),
   };
 }

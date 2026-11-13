@@ -1,9 +1,66 @@
 import { redirect } from "next/navigation";
-import { currentStaff } from "@/server/auth";
-import { db } from "@/server/db";
+import { currentStaff,canManage } from "@/server/auth";
 import { AdminShell } from "@/features/admin/components/admin-shell";
-import { EnquiryTable } from "@/features/admin/components/enquiry-table";
-import type { EnquiryRow } from "@/server/admin-data";
-import Link from "next/link";
-export async function EnquiriesSection({searchParams}:{searchParams:Promise<{status?:string,page?:string}>}){const user=await currentStaff();if(!user)redirect("/admin/login");const q=await searchParams;const allowed=["all","new","reviewing","quoted","awaiting_customer","confirmed","closed"] as const;const status=allowed.includes(q.status as typeof allowed[number])?q.status!:"all";const page=Math.max(1,Math.min(1000,Number(q.page)||1));let rows:EnquiryRow[]=[];let error=false;try{const sql=db();const p=page-1;const offset=p*30;const all=await sql`SELECT id,reference,name,email,phone,service,origin,destination,departure_date::text,return_date::text,travellers,notes,status,created_at::text,assigned_to FROM enquiries WHERE ${status}='all' OR status=${status} ORDER BY created_at DESC LIMIT 30 OFFSET ${offset}`;rows=all as EnquiryRow[]}catch{error=true}
- return <AdminShell user={user}><div className="mb-9"><p className="eyebrow">Travel operations</p><h1 className="display-heading mt-3 text-4xl">Enquiries</h1><p className="mt-3 text-sm text-muted">Review, assign and follow up on travel requests.</p></div><div className="mb-6 flex flex-wrap gap-2">{allowed.map(s=><Link key={s} href={`/admin/enquiries?status=${s}`} className={`rounded-full border px-4 py-2 text-xs font-semibold capitalize ${s===status?"border-sapphire bg-sapphire text-white":"border-[#dce4ef] bg-white text-muted hover:border-sapphire"}`}>{s.replaceAll("_"," ")}</Link>)}</div>{error?<div role="alert" className="rounded-xl border border-red-200 bg-red-50 p-5 text-sm text-red-700">Unable to load enquiries. Check the Neon connection.</div>:<EnquiryTable rows={rows}/>}<div className="mt-6 flex justify-between text-xs text-sapphire">{page>1?<Link href={`/admin/enquiries?status=${status}&page=${page-1}`}>Previous page</Link>:<span/>}{rows.length===30&&<Link href={`/admin/enquiries?status=${status}&page=${page+1}`}>Next page</Link>}</div></AdminShell>}
+import { EnquiryDirectory, type DirectoryRecord } from "@/features/admin/components/enquiry-directory";
+import { describeAirport } from "@/server/airport-lookup";
+import { generalStatuses,generalServices,readGeneralFilters,listGeneralEnquiries,generalFilterParams } from "@/server/general-enquiry-data";
+
+const labels:Record<string,string>={new:"New",reviewing:"Reviewing",quoted:"Quoted",awaiting_customer:"Awaiting customer",confirmed:"Confirmed",closed:"Closed"};
+const serviceNames:Record<string,string>={flight:"Flight",corporate:"Corporate travel",visa:"Visa assistance",holiday:"Tours"};
+
+export async function EnquiriesSection({searchParams}:{
+ searchParams:Promise<Record<string,string|string[]|undefined>>;
+}){
+ const staff=await currentStaff();
+ if(!staff)redirect("/admin/login");
+ const filters=readGeneralFilters(await searchParams);
+ let data:Awaited<ReturnType<typeof listGeneralEnquiries>>={rows:[],total:0};
+ let error="";
+ try{data=await listGeneralEnquiries(filters);}
+ catch{error="Unable to load enquiries. Check the Neon database connection.";}
+ const active:Record<string,string>={
+  q:filters.q,status:filters.status,service:filters.service,from:filters.from,to:filters.to,
+ };
+ const records:DirectoryRecord[]=data.rows.map(row=>{
+   let detail=serviceNames[row.service]||row.service;
+   if(row.service==="flight"){
+     detail+=" · "+describeAirport(row.origin)+" → "+describeAirport(row.destination);
+   }else if(row.service==="corporate"){
+     const location=row.notes?.split("\n").find(line=>line.startsWith("Destination city: "))?.slice(18);
+     detail+=" · "+(location||describeAirport(row.destination));
+   }else if(row.destination){
+     detail+=" · "+describeAirport(row.destination);
+   }
+   return {
+    id:row.id,href:"/admin/enquiries/"+row.id,reference:row.reference,
+    name:row.name,email:row.email,detail,travelDate:row.departure_date,
+    createdAt:row.created_at,status:row.status,travellers:row.travellers,
+   };
+ });
+ const query=generalFilterParams(filters);
+ return <AdminShell user={staff}>
+   <EnquiryDirectory
+     title="Enquiries" description="Review, assign and follow up on individual flight and corporate travel requests."
+     eyebrow="Travel operations" path="/admin/enquiries" rows={records}
+     total={data.total} page={filters.page} pageSize={20}
+     statuses={generalStatuses.map(value=>({value,label:labels[value]}))}
+     active={active} columns={{detail:"Service / destination",travelDate:"Travel date"}}
+     exportHref={canManage(staff)&&!error?"/api/admin/enquiries/export"+(query?"?"+query:""):undefined}
+     error={error} emptyMessage="No enquiries match these filters."
+     filterFields={<>
+       <label className="block text-[11px] font-medium text-[#53647e]">Service
+         <select name="service" defaultValue={filters.service} className="input-field mt-1 min-h-10 text-xs">
+           <option value="">All services</option>
+           {generalServices.map(value=><option key={value} value={value}>{serviceNames[value]}</option>)}
+         </select>
+       </label>
+       <label className="block text-[11px] font-medium text-[#53647e]">Submitted from
+         <input name="from" type="date" defaultValue={filters.from} className="input-field mt-1 min-h-10 text-xs"/>
+       </label>
+       <label className="block text-[11px] font-medium text-[#53647e]">Submitted to
+         <input name="to" type="date" defaultValue={filters.to} className="input-field mt-1 min-h-10 text-xs"/>
+       </label>
+     </>}
+   />
+ </AdminShell>;
+}
