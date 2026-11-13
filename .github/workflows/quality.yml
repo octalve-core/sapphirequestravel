@@ -24,6 +24,8 @@ jobs:
       - run: pnpm test
       - name: Validate complete flight journey payloads
         run: pnpm exec tsx scripts/check-flight-enquiries.ts
+      - name: Validate transactional email templates
+        run: pnpm exec tsx scripts/check-email-templates.ts
       - name: Validate first-owner bootstrap without credentials
         shell: bash
         run: |
