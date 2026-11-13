@@ -1,7 +1,7 @@
 import "server-only";
 import { db } from "@/server/db";
 import { featuredPackages, featuredPackageSlugs, legacyDemonstrationSlugs } from "@/data/festive-packages";
-import { emptyPackage, packageSchema, type PackageRecord } from "@/server/package-schema";
+import { packageSchema, type PackageRecord } from "@/server/package-schema";
 
 /** Staff-edited Neon packages take precedence over the initial featured catalogue.
  * A staff-unpublished featured package must remain unpublished. */

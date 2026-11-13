@@ -47,7 +47,11 @@ test('tours, visas and corporate requests have structured first-step fields and 
  const schema = read('src/server/enquiry-schema.ts');
  assert.match(wizard, /ServiceRequestFields/);
  assert.match(wizard, /Contact details/);
- assert.match(wizard, /serviceRequest: service !== "flight"/);
+ assert.match(wizard, /serviceRequest: service === "corporate"/);
+ assert.match(wizard, /<VisaRequestFields/);
+ assert.match(wizard, /<TourRequestFields/);
+ assert.match(wizard, /"\/api\/visa-enquiries"/);
+ assert.match(wizard, /"\/api\/packages\/"\+encodeURIComponent\(tour\.slug\)/);
  assert.match(fields, /AirportCombobox/);
  assert.match(fields, /startDate/);
  assert.match(fields, /travellers/);
