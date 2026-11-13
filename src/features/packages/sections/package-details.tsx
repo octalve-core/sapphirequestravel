@@ -12,7 +12,7 @@ export function PackageDetails({ item }: { item: PackageRecord }) {
       <div className="container-wide grid items-start gap-10 lg:grid-cols-[minmax(0,1.35fr)_minmax(320px,.65fr)]">
         <div className="min-w-0 space-y-9">
           <div className="grid grid-cols-2 gap-3">
-            {(item.images.length ? item.images : [""]).map((src, index) => (
+            {(item.images.length ? item.images : item.details.home?.image ? [item.details.home.image] : [""]).map((src, index) => (
               <div key={src + index} className={"relative aspect-[5/3] overflow-hidden rounded-2xl bg-[#f1f5fb] " + (index === 0 ? "col-span-2" : "")}>
                 <PackageImage src={src} alt={item.title + " — photo " + (index + 1)}/>
               </div>

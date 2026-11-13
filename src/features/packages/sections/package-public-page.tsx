@@ -11,7 +11,7 @@ export async function PackagePublicPage({ slug }: { slug: string }) {
   return (
     <>
       <PageHero
-        image={record.images?.[0] || "/images/hero-packages.webp"}
+        image={record.images?.[0] || record.details.home?.image || "/images/hero-packages.webp"}
         overlay="deep"
         eyebrow={record.destination}
         title={record.title}

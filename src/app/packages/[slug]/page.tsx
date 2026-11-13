@@ -20,7 +20,7 @@ export async function generateMetadata({
     openGraph: {
       title: item.title + " | Sapphire Quest",
       description: item.summary,
-      images: [item.images[0] || "/images/hero-packages.webp"],
+      images: [item.images[0] || item.details.home?.image || "/images/hero-packages.webp"],
       type: "website",
     },
   };
