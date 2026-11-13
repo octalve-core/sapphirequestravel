@@ -9,6 +9,10 @@ import {
 } from "lucide-react";
 import { AirportCombobox } from "@/features/booking/components/airport-combobox";
 import { ServiceRequestFields } from "@/features/booking/components/service-request-fields";
+import { VisaRequestFields, blankVisa, type VisaSelection } from "@/features/booking/components/visa-request-fields";
+import { TourRequestFields, blankTour, type TourSelection, type TourOption } from "@/features/booking/components/tour-request-fields";
+import { countryName, validCountryCodes } from "@/data/countries";
+import { visaTypes, visaPurposes } from "@/server/visa-enquiry-schema";
 import { serviceFields, serviceNames, isOtherService, selectionLabel, type Service, type OtherService, type ServiceSelection } from "@/features/booking/lib/service-options";
 import { Button } from "@/components/ui/button";
 
@@ -93,6 +97,22 @@ export function EnquiryWizard({ initial = {}, embedded = false }: { initial?: En
   const [cabin, setCabin] = useState<Cabin>("economy");
   const [passengers, setPassengers] = useState<Passengers>({ adults: Math.min(Math.max(initial.passengers || 1, 1), 9), children: 0, infants: 0 });
   const [directOnly, setDirectOnly] = useState(false);
+  const [visa, setVisa] = useState<VisaSelection>(()=>blankVisa());
+  const [tour, setTour] = useState<TourSelection>(()=>blankTour(initial.packageSlug||""));
+  const [tourPackages,setTourPackages] = useState<TourOption[]>([]);
+  const [tourLoading,setTourLoading] = useState(false);
+  const [tourError,setTourError] = useState("");
+  useEffect(()=>{
+    if(service!=="holiday")return;
+    const controller=new AbortController();
+    setTourLoading(true);setTourError("");
+    fetch("/api/packages/options",{signal:controller.signal})
+      .then(async response=>{if(!response.ok)throw new Error("Packages unavailable");return response.json() as Promise<{packages:TourOption[]}>;})
+      .then(result=>{if(!controller.signal.aborted){setTourPackages(result.packages||[]);if(!result.packages?.length)setTourError("Our tours are temporarily unavailable. Please contact our team.");}})
+      .catch(()=>{if(!controller.signal.aborted){setTourPackages([]);setTourError("Could not load packages. Please refresh and try again.");}})
+      .finally(()=>{if(!controller.signal.aborted)setTourLoading(false);});
+    return()=>controller.abort();
+  },[service]);
   const [flexibleDates, setFlexibleDates] = useState(false);
   const [legs, setLegs] = useState<Leg[]>([{ id: 1, origin: initial.from || "", destination: initial.to || "", date: initial.departure || "", swapRevision: 0 }]);
   const idCounter = useRef(2);
@@ -102,7 +122,7 @@ export function EnquiryWizard({ initial = {}, embedded = false }: { initial?: En
     holiday: createSelection("holiday", initial.service === "holiday" ? initial.to : "", initial.service === "holiday" ? initial.departure : "", initial.service === "holiday" ? initial.passengers : 1),
     corporate: createSelection("corporate", initial.service === "corporate" ? initial.to : "", initial.service === "corporate" ? initial.departure : "", initial.service === "corporate" ? initial.passengers : 1),
   });
-  const [contact, setContact] = useState({ name: "", email: "", phone: "", organisation: "", notes: initial.packageSlug ? `Enquiry about package: ${initial.packageSlug}` : "", website: "" });
+  const [contact, setContact] = useState({ name: "", email: "", phone: "", organisation: "", notes: "", website: "" });
   const [consent, setConsent] = useState(false);
   const [busy, setBusy] = useState(false);
   const [error, setError] = useState("");
@@ -121,6 +141,23 @@ export function EnquiryWizard({ initial = {}, embedded = false }: { initial?: En
   const addLeg = () => setLegs(p => p.length >= maxLegs ? p : [...p, { id: idCounter.current++, origin: p[p.length - 1].destination, destination: "", date: "", swapRevision: 0 }]);
 
   function validate(): string {
+    if (service === "visa") {
+      if (!validCountryCodes.has(visa.countryCode)) return "Choose a destination country.";
+      if (visa.city.trim().length < 2) return "Enter the destination city.";
+      if (!visaTypes.some(t=>t.value===visa.visaType)) return "Select a visa type.";
+      if (!visaPurposes.some(t=>t.value===visa.travelPurpose)) return "Select your travel purpose.";
+      if (!isDate(visa.intendedDate) || visa.intendedDate < today()) return "Choose a valid intended travel date.";
+      if (!Number.isInteger(visa.travellers) || visa.travellers < 1 || visa.travellers > 30) return "Choose the number of travellers.";
+      return "";
+    }
+    if (service === "holiday") {
+      if (!tourPackages.some(item=>item.slug===tour.slug)) return "Choose one of our published packages.";
+      if (!isDate(tour.startDate) || tour.startDate < today()) return "Choose a valid future tour date.";
+      const total=tour.adults+tour.children+tour.infants;
+      if (tour.adults<1 || total>30 || tour.infants>tour.adults) return "Check the traveller breakdown.";
+      if (!tour.departureCity) return "Choose your departure city.";
+      return "";
+    }
     if (service !== "flight") {
       const x = other[service];
       if (!/^[A-Z]{3}$/.test(x.destination)) return "Choose a destination from the airport suggestions.";
@@ -155,9 +192,17 @@ export function EnquiryWizard({ initial = {}, embedded = false }: { initial?: En
     if (!consent) { setError("Please agree to the privacy policy before submitting."); return; }
     setBusy(true); setError("");
     try {
-      const response = await fetch("/api/enquiries", {
-        method: "POST", headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({
+      const submitUrl=service==="visa"?"/api/visa-enquiries":
+        service==="holiday"?"/api/packages/"+encodeURIComponent(tour.slug)+"/enquiries":"/api/enquiries";
+      const body=service==="visa"?{
+        name:contact.name,email:contact.email,phone:contact.phone,notes:contact.notes,
+        website:contact.website,consent,...visa,
+      }:service==="holiday"?{
+        name:contact.name,email:contact.email,phone:contact.phone,notes:contact.notes,
+        website:contact.website,consent,
+        preferredDate:tour.startDate,departureCity:tour.departureCity,
+        adults:tour.adults,children:tour.children,infants:tour.infants,
+      }:{
           ...contact, service, consent,
           origin: service === "flight" ? first.origin : "",
           destination: service === "flight" ? first.destination : activeSelection?.destination || "",
@@ -169,11 +214,16 @@ export function EnquiryWizard({ initial = {}, embedded = false }: { initial?: En
             legs: (journey === "multi-city" ? legs : [first]).map(({ origin, destination, date }) => ({ origin, destination, date })),
             returnDate: journey === "return" ? returnDate : "",
           } : undefined,
-          serviceRequest: service !== "flight" ? { ...activeSelection, organisation: service === "corporate" ? contact.organisation : "" } : undefined,
-        }),
+          serviceRequest: service === "corporate" ? { ...other.corporate, organisation: contact.organisation } : undefined,
+      };
+      const response = await fetch(submitUrl, {
+        method: "POST", headers: { "Content-Type": "application/json" },
+        body: JSON.stringify(body),
       });
       const result: { ok?: boolean; error?: string; reference?: string } = await response.json();
-      if (!response.ok || !result.ok || !result.reference) { setError(result.error || "Please try again."); return; }
+      if (!response.ok || !result.reference || (service!=="holiday" && !result.ok)) {
+        setError(result.error || "Please try again.");return;
+      }
       router.push(`/thanks?ref=${encodeURIComponent(result.reference)}`);
     } catch { setError("We couldn't submit your request. Please try again or contact us directly."); }
     finally { setBusy(false); }
@@ -222,14 +272,24 @@ export function EnquiryWizard({ initial = {}, embedded = false }: { initial?: En
             {legs.slice(1).map((leg, i) => renderFlightLeg(leg, i + 1))}
             <button type="button" disabled={legs.length >= maxLegs} onClick={addLeg} className="inline-flex items-center gap-2 rounded-lg border border-[#cfdff4] bg-white px-4 py-2.5 text-xs font-semibold text-sapphire hover:bg-[#eef4ff] disabled:opacity-40"><Plus size={15}/> Add another flight</button>
           </div>}
-        </div> : <ServiceRequestFields idPrefix={prefix} minDate={today()} service={service} value={other[service]} onChange={value => setOther(p => ({ ...p, [service]: value }))}/> : <>
+        </div> : service==="visa" ?
+          <VisaRequestFields idPrefix={prefix} minDate={today()} value={visa} onChange={setVisa}/> :
+          service==="holiday" ?
+          <TourRequestFields idPrefix={prefix} minDate={today()} value={tour} onChange={setTour}
+            options={tourPackages} loading={tourLoading} error={tourError}/> :
+          <ServiceRequestFields idPrefix={prefix} minDate={today()} service="corporate" value={other.corporate}
+            onChange={value=>setOther(p=>({...p,corporate:value}))}/> : <>
           <div className="mb-4 rounded-xl border border-[#e2eaf6] bg-[#f7faff] px-4 py-3 text-xs text-[#405373]">
             <p className="mb-1 text-[11px] font-semibold uppercase tracking-wide text-sapphire">Request summary</p>
             {service === "flight" ? <>
               <p className="font-semibold text-navy">{journeys.find(item => item.value === journey)?.label} · {cabins[cabin]} · {count(passengers)} {count(passengers) === 1 ? "passenger" : "passengers"}</p>
               {(journey === "multi-city" ? legs : [first]).map((leg, index) => <p className="mt-1" key={leg.id}>{journey === "multi-city" ? `Flight ${index + 1}: ` : ""}{leg.origin} → {leg.destination} · {leg.date}</p>)}
               {journey === "return" && <p className="mt-1">Return: {returnDate}</p>}
-            </> : <p><span className="font-semibold text-navy">{other[service].destination}</span> · {other[service].startDate} · {other[service].travellers} {other[service].travellers === 1 ? "traveller" : "travellers"} · {selectionLabel(service, other[service].category)}</p>}
+            </> : service==="visa" ?
+              <p><span className="font-semibold text-navy">{visa.city}, {countryName(visa.countryCode)}</span> · {visa.intendedDate} · {visa.travellers} travellers · {visaTypes.find(x=>x.value===visa.visaType)?.label} · {visaPurposes.find(x=>x.value===visa.travelPurpose)?.label}</p> :
+              service==="holiday" ?
+              <p><span className="font-semibold text-navy">{tourPackages.find(x=>x.slug===tour.slug)?.title}</span> · {tour.startDate} · {tour.adults+tour.children+tour.infants} travellers · From {tour.departureCity}</p> :
+              <p><span className="font-semibold text-navy">{other.corporate.destination}</span> · {other.corporate.startDate} · {other.corporate.travellers} travellers · {selectionLabel("corporate",other.corporate.category)}</p>}
           </div>
           <div className="grid gap-3 sm:grid-cols-2">
             <div><label className="booking-label" htmlFor={`${prefix}-contact-name`}>Full name</label><input id={`${prefix}-contact-name`} required minLength={2} maxLength={100} autoComplete="name" className="booking-input" value={contact.name} onChange={e => updateContact("name", e.target.value)}/></div>
