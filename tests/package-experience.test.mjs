@@ -18,7 +18,7 @@ test("ratings require actual review count and source before public stars are sho
   const schema = read("src/server/package-schema.ts");
   assert.match(display, /if \(score == null \|\| !count \|\| !source/);
   assert.match(display, /Curated experience/);
-  assert.match(schema, /ratingScore:null,ratingCount:0,ratingSource:""/);
+  assert.match(schema, /ratingScore:\s*null,\s*ratingCount:\s*0,\s*ratingSource:\s*""/);
   assert.match(schema, /genuine customer feedback/);
 });
 test("dedicated package form never uses the generic booking wizard", () => {
