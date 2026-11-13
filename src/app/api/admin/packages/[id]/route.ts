@@ -14,7 +14,7 @@ export async function PATCH(req:NextRequest,{params}:{params:Promise<{id:string}
  if(!parsed.success)return NextResponse.json({error:parsed.error.issues[0]?.message || "Invalid package details"},{status:422});
  const x=parsed.data;
  try {const sql=db();const rows=await sql`WITH changed AS (
-  UPDATE travel_packages SET title=${x.title},slug=${x.slug},summary=${x.summary},destination=${x.destination},status=${x.status},highlights=${x.highlights},price_amount=${x.priceAmount},currency=${x.currency},discount_percent=${x.discountPercent},features=${JSON.stringify(x.features)}::jsonb,images=${JSON.stringify(x.images)}::jsonb,details=${JSON.stringify(x.details)}::jsonb,hero_image=${x.images[0]||""},updated_at=now()
+  UPDATE travel_packages SET title=${x.title},slug=${x.slug},summary=${x.summary},destination=${x.destination},status=${x.status},highlights=${x.highlights},price_amount=${x.priceAmount},currency=${x.currency},discount_percent=${x.discountPercent},features=${JSON.stringify(x.features)}::jsonb,images=${JSON.stringify(x.images)}::jsonb,details=${JSON.stringify(x.details)}::jsonb,hero_image=${x.images[0]||""},rating_score=${x.ratingScore},rating_count=${x.ratingCount},rating_source=${x.ratingSource},updated_at=now()
   WHERE id=${id} RETURNING id
  ), logged AS (
   INSERT INTO audit_events(actor_staff_id,action,entity_type,entity_id) SELECT ${staff.id},'package.update','package',id::text FROM changed RETURNING id

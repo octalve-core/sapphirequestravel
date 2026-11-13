@@ -14,7 +14,7 @@ export function PackageFields({initial,id,onSaved}:{initial?:PackageInput;id?:st
  async function save(e:FormEvent){e.preventDefault();setBusy(true);setMessage("");try{
   const r=await fetch(id?`/api/admin/packages/${id}`:"/api/admin/packages",{method:id?"PATCH":"POST",headers:{"Content-Type":"application/json"},body:JSON.stringify(form)});
   const data:{error?:string,ok?:boolean}=await r.json();if(!r.ok||!data.ok){setMessage(data.error||"Unable to save. Check the fields and database migration.");return}
-  setMessage(id?"Package updated":"Draft package created");if(!id){setForm(emptyPackage());setSlugEdited(false);setEditorReset(x=>x+1)}onSaved?.();router.refresh();
+  setMessage(id?"Package updated":"Package created");if(!id){setForm(emptyPackage());setSlugEdited(false);setEditorReset(x=>x+1);router.push("/admin/packages");}onSaved?.();router.refresh();
  }catch{setMessage("Network error. Check your connection.")}finally{setBusy(false)}}
  return <form onSubmit={save} className="space-y-6">
   <div className="grid gap-4 sm:grid-cols-2">
@@ -30,7 +30,22 @@ export function PackageFields({initial,id,onSaved}:{initial?:PackageInput;id?:st
    <div><label className="label-field">Currency</label><select className="input-field" value={form.currency} onChange={e=>update("currency",e.target.value as PackageInput["currency"])}>{["NGN","USD","GBP","EUR"].map(c=><option key={c} value={c}>{c}</option>)}</select></div>
    <div><label className="label-field">Discount (%)</label><input type="number" min={0} max={90} step={1} className="input-field" value={form.discountPercent} onChange={e=>update("discountPercent",Number(e.target.value))}/></div>
   </div>
-  <p className="-mt-4 text-[11px] leading-5 text-muted">Only prices approved by the travel team should be published. Discounts are indicative until a customer receives a confirmed quote.</p>
+  <p className="-mt-4 text-[11px] leading-5 text-muted">Published prices should reflect a genuine supplier-based starting offer. Final traveller arrangements are confirmed before payment.</p>
+  <fieldset className="rounded-2xl border border-[#dde6f1] bg-[#f8faff] p-5">
+    <legend className="px-2 text-sm font-medium text-navy">Guest ratings — verified feedback only</legend>
+    <p className="mb-4 text-xs leading-6 text-muted">Show a star rating only after receiving genuine, documented customer reviews. Leave blank for new packages. Rating and review count are editable here.</p>
+    <div className="grid gap-4 sm:grid-cols-3">
+      <label className="text-xs text-navy">Average stars (1–5)
+        <input aria-label="Average guest rating" type="number" step="0.1" min="1" max="5" className="input-field mt-2" placeholder="Not yet rated" value={form.ratingScore??""} onChange={e=>update("ratingScore",e.target.value===""?null:Number(e.target.value))}/>
+      </label>
+      <label className="text-xs text-navy">Verified review count
+        <input type="number" min="0" max="1000000" step="1" className="input-field mt-2" value={form.ratingCount} onChange={e=>update("ratingCount",Number(e.target.value))}/>
+      </label>
+      <label className="text-xs text-navy">Evidence / feedback source
+        <input maxLength={250} className="input-field mt-2" value={form.ratingSource} onChange={e=>update("ratingSource",e.target.value)} placeholder="e.g. dated post-trip customer surveys"/>
+      </label>
+    </div>
+  </fieldset>
   <div><label className="label-field">Included features — one item per line</label><textarea className="input-field min-h-[130px] py-3" placeholder={"e.g. Flight coordination\nAccommodation guidance\nAirport transfers"} value={form.features.join("\n")} onChange={e=>update("features",e.target.value.split("\n").map(x=>x.trim()).filter(Boolean).slice(0,20))}/></div>
   <div><label className="label-field">Full package description</label><RichTextEditor key={editorReset} value={form.details} onChange={v=>update("details",v)}/></div>
   <div><label className="label-field">Package photos</label><PackageMedia images={form.images} onChange={v=>update("images",v)}/></div>

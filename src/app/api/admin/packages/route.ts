@@ -12,8 +12,8 @@ export async function POST(req:NextRequest){
  if(!parsed.success)return NextResponse.json({error:parsed.error.issues[0]?.message || "Invalid package details"},{status:422});
  const x=parsed.data;
  try {const sql=db();await sql`WITH new_package AS (
-  INSERT INTO travel_packages(title,slug,summary,destination,status,highlights,price_amount,currency,discount_percent,features,images,details,hero_image)
-  VALUES(${x.title},${x.slug},${x.summary},${x.destination},${x.status},${x.highlights},${x.priceAmount},${x.currency},${x.discountPercent},${JSON.stringify(x.features)}::jsonb,${JSON.stringify(x.images)}::jsonb,${JSON.stringify(x.details)}::jsonb,${x.images[0]||""})
+  INSERT INTO travel_packages(title,slug,summary,destination,status,highlights,price_amount,currency,discount_percent,features,images,details,hero_image,rating_score,rating_count,rating_source)
+  VALUES(${x.title},${x.slug},${x.summary},${x.destination},${x.status},${x.highlights},${x.priceAmount},${x.currency},${x.discountPercent},${JSON.stringify(x.features)}::jsonb,${JSON.stringify(x.images)}::jsonb,${JSON.stringify(x.details)}::jsonb,${x.images[0]||""},${x.ratingScore},${x.ratingCount},${x.ratingSource})
   RETURNING id
  ) INSERT INTO audit_events(actor_staff_id,action,entity_type,entity_id)
  SELECT ${staff.id},'package.create','package',id::text FROM new_package`;
