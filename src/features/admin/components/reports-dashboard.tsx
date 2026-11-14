@@ -106,7 +106,7 @@ function Delta({current,previous}:{current:number;previous:number}){
 export function ReportDashboard({report:r}:{report:ReportData}){
  const s=r.summary,open=s.newCount+s.active;
  const formattedTime=new Date(r.asOf).toLocaleString("en-GB",{day:"numeric",month:"short",year:"numeric",hour:"2-digit",minute:"2-digit",timeZone:"UTC"})+" UTC";
- const kpis:[
+ const kpis=[
   {title:"Enquiries received",value:n(s.total),detail:"All three enquiry systems",icon:Inbox,accent:"bg-[#e8f3ff] text-sapphire"},
   {title:"Contact email addresses",value:n(s.uniqueContacts),detail:"Distinct submitted addresses",icon:UsersRound,accent:"bg-[#f0ebff] text-[#7557c6]"},
   {title:"Awaiting action",value:n(open),detail:"New or in-progress enquiries",icon:Clock3,accent:"bg-[#fff3e7] text-[#c28132]"},
