@@ -31,8 +31,8 @@ test('admin login and sidebar use the same official header logo component', () =
   const sidebar = read('src/features/admin/components/admin-shell.tsx');
   const login = read('src/features/admin/sections/login-screen.tsx');
   assert.match(component, /href=\{href\}/);
-  assert.match(sidebar, /<BrandMark compact href="\/admin"\s*\/>/);
-  assert.match(sidebar, /bg-white px-3 py-2/);
+  assert.match(sidebar, /<BrandMark inverse href="\/admin"\s*\/>/);
+  assert.match(sidebar, /bg-\[#061a36\]/);
   assert.match(login, /<BrandMark\s*\/>/);
   assert.doesNotMatch(login, /<Plane/);
 });
