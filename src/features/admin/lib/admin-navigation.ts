@@ -1,8 +1,9 @@
-import { ClipboardList, FileCheck2, Inbox, LayoutDashboard, Package } from "lucide-react";
+import { BarChart3, ClipboardList, FileCheck2, Inbox, LayoutDashboard, Package } from "lucide-react";
 
 export const adminNavigation = [
   {title:"Workspace", items:[
     {label:"Overview",href:"/admin",icon:LayoutDashboard},
+    {label:"Reports & insights",href:"/admin/reports",icon:BarChart3},
     {label:"Enquiries",href:"/admin/enquiries",icon:Inbox},
     {label:"Package enquiries",href:"/admin/package-enquiries",icon:ClipboardList},
     {label:"Visa enquiries",href:"/admin/visa-enquiries",icon:FileCheck2},
