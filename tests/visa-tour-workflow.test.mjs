@@ -41,7 +41,7 @@ test("shared contact step routes visa to visa table, tours to package table and 
  assert.match(w,/flightRequest: service === "flight"/);
 });
 test("visa admin supports filters, secure export and audited staff changes",()=>{
- const nav=read("src/features/admin/components/admin-shell.tsx");
+ const nav=read("src/features/admin/lib/admin-navigation.ts");
  const list=read("src/features/admin/sections/visa-enquiries-section.tsx");
  const csv=read("src/app/api/admin/visa-enquiries/export/route.ts");
  const patch=read("src/app/api/admin/visa-enquiries/[id]/route.ts");

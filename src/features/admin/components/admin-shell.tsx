@@ -1,12 +1,117 @@
 "use client";
-import { useRouter,usePathname } from "next/navigation";
+
+import { useEffect, useRef, useState } from "react";
+import { usePathname, useRouter } from "next/navigation";
 import Link from "next/link";
-import { useState } from "react";
-import { LayoutDashboard, Inbox, Package, ClipboardList, FileCheck2, LogOut, Menu, X, ExternalLink } from "lucide-react";
+import { ExternalLink, LogOut, X } from "lucide-react";
 import { cn } from "@/lib/utils";
 import { BrandMark } from "@/components/ui/brand-mark";
-const nav=[{label:"Overview",href:"/admin",icon:LayoutDashboard},{label:"Enquiries",href:"/admin/enquiries",icon:Inbox},{label:"Packages",href:"/admin/packages",icon:Package},{label:"Package enquiries",href:"/admin/package-enquiries",icon:ClipboardList},{label:"Visa enquiries",href:"/admin/visa-enquiries",icon:FileCheck2}];
-export function AdminShell({children,user}:{children:React.ReactNode,user:{name:string,role:string}}){const router=useRouter();const pathname=usePathname();const [open,setOpen]=useState(false);async function logout(){await fetch("/api/auth/logout",{method:"POST"});router.replace("/admin/login");router.refresh()}
- return <div className="min-h-screen bg-[#f5f7fb] lg:flex"><aside className={cn("fixed inset-y-0 left-0 z-40 w-[260px] transform bg-[#061a36] p-6 text-white transition-transform lg:sticky lg:top-0 lg:h-screen lg:translate-x-0",open?"translate-x-0":"-translate-x-full")}><div className="mb-12"><div className="flex items-start justify-between gap-2"><div className="flex min-h-[88px] flex-1 items-center rounded-xl bg-white px-3 py-2 shadow-sm"><BrandMark compact href="/admin"/></div><button className="mt-2 shrink-0 lg:hidden" onClick={()=>setOpen(false)} aria-label="Close menu"><X/></button></div><p className="mt-4 text-[10px] font-semibold uppercase tracking-[.18em] text-white/55">Team workspace</p></div><nav aria-label="Dashboard navigation" className="flex flex-col gap-1.5">{nav.map(i=><Link onClick={()=>setOpen(false)} key={i.href} href={i.href} className={cn("flex items-center gap-3 rounded-xl px-4 py-3.5 text-[13px] font-medium transition-colors",pathname===i.href?"bg-[#1958b4] text-white":"text-white/65 hover:bg-white/10 hover:text-white")}><i.icon size={18} strokeWidth={1.7}/>{i.label}</Link>)}</nav><div className="absolute right-6 bottom-8 left-6 space-y-2 border-t border-white/15 pt-6"><Link href="/" target="_blank" className="flex items-center gap-2 py-2 text-xs text-white/55 hover:text-white"><ExternalLink size={14}/> View public website</Link><button type="button" onClick={logout} className="flex items-center gap-2 py-2 text-xs text-white/70 hover:text-white"><LogOut size={15}/> Log out</button></div></aside>
- <div className="min-w-0 flex-1"><header className="flex h-[76px] items-center justify-between border-b border-[#e9edf3] bg-white px-5 sm:px-9"><div className="flex items-center gap-4"><button className="lg:hidden" type="button" aria-label="Open menu" onClick={()=>setOpen(true)}><Menu size={22}/></button><p className="text-sm font-semibold tracking-[-.025em] text-navy">Operations dashboard</p></div><span className="text-xs text-muted">{user.name} <span className="ml-2 rounded-full bg-[#edf4ff] px-3 py-1.5 capitalize text-sapphire">{user.role}</span></span></header><main id="main-content" className="mx-auto max-w-[1500px] px-5 py-8 sm:px-9 sm:py-10">{children}</main></div>{open&&<button aria-label="Close navigation" className="fixed inset-0 z-30 bg-black/50 lg:hidden" onClick={()=>setOpen(false)}/>}</div>
+import { adminNavigation } from "@/features/admin/lib/admin-navigation";
+import { AdminTopbar } from "@/features/admin/components/admin-topbar";
+
+type StaffDisplay={name:string;role:string};
+
+function AdminSidebar({pathname,onNavigate,onLogout,logoutBusy,mobile}:{
+ pathname:string;onNavigate:()=>void;onLogout:()=>void;logoutBusy:boolean;mobile?:boolean;
+}){
+ return <div className="flex h-full min-h-0 flex-col">
+   <div className="flex items-start justify-between gap-2 border-b border-white/10 pb-6">
+     <div className="min-w-0">
+       <BrandMark inverse href="/admin"/>
+       <p className="mt-4 px-1 text-[10px] font-medium uppercase tracking-[.18em] text-[#9eb8d9]">Team workspace</p>
+     </div>
+     {mobile&&<button type="button" onClick={onNavigate} aria-label="Close navigation menu"
+       className="inline-flex size-10 shrink-0 items-center justify-center rounded-xl text-white/80 transition-colors hover:bg-white/10">
+       <X size={20} aria-hidden="true"/>
+     </button>}
+   </div>
+   <nav aria-label={mobile?"Mobile admin navigation":"Admin sidebar navigation"}
+     className="mt-6 flex-1 space-y-7 overflow-y-auto">
+     {adminNavigation.map(section=><div key={section.title}>
+       <p className="mb-2 px-3 text-[10px] font-medium uppercase tracking-[.15em] text-[#829dc2]">{section.title}</p>
+       <div className="space-y-1">
+         {section.items.map(item=>{
+           const Icon=item.icon;
+           const active=pathname===item.href||(item.href!=="/admin"&&pathname.startsWith(item.href+"/"));
+           return <Link key={item.href} href={item.href} onClick={onNavigate}
+             aria-current={pathname===item.href?"page":undefined}
+             className={cn("relative flex min-h-11 items-center gap-3 rounded-xl px-3.5 py-3 text-[12px] font-medium transition-colors",
+               active?"bg-[#0e57c5] text-white shadow-[0_6px_18px_rgba(0,64,159,.25)]":"text-[#b6c8e0] hover:bg-white/10 hover:text-white")}>
+             <Icon size={18} strokeWidth={1.75} className="shrink-0" aria-hidden="true"/>
+             <span>{item.label}</span>
+           </Link>;
+         })}
+       </div>
+     </div>)}
+   </nav>
+   <div className="mt-5 space-y-1 border-t border-white/15 pt-5">
+     <Link href="/" onClick={onNavigate} target="_blank" rel="noopener noreferrer"
+       className="flex min-h-11 items-center gap-3 rounded-xl px-3 text-[12px] text-[#b6c8e0] transition-colors hover:bg-white/10 hover:text-white">
+       <ExternalLink size={17} aria-hidden="true"/> Public website
+     </Link>
+     <button type="button" disabled={logoutBusy} onClick={onLogout}
+       className="flex min-h-11 w-full items-center gap-3 rounded-xl px-3 text-left text-[12px] text-[#b6c8e0] transition-colors hover:bg-white/10 hover:text-white disabled:opacity-50">
+       <LogOut size={17} aria-hidden="true"/>{logoutBusy?"Signing out...":"Sign out"}
+     </button>
+   </div>
+ </div>;
+}
+
+export function AdminShell({children,user}:{children:React.ReactNode;user:StaffDisplay}){
+ const pathname=usePathname()||"/admin";
+ const router=useRouter();
+ const dialogRef=useRef<HTMLDialogElement>(null);
+ const [logoutBusy,setLogoutBusy]=useState(false);
+ const [logoutError,setLogoutError]=useState("");
+
+ function closeMenu(){dialogRef.current?.close();}
+ function openMenu(){
+   const el=dialogRef.current;
+   if(el&&!el.open)el.showModal();
+ }
+ useEffect(()=>{
+   dialogRef.current?.close();
+ },[pathname]);
+ useEffect(()=>{
+   const media=window.matchMedia("(min-width: 1024px)");
+   const closeOnDesktop=()=>{if(media.matches)dialogRef.current?.close();};
+   media.addEventListener("change",closeOnDesktop);
+   return ()=>media.removeEventListener("change",closeOnDesktop);
+ },[]);
+ async function logout(){
+   if(logoutBusy)return;
+   setLogoutBusy(true);
+   setLogoutError("");
+   try{
+     const response=await fetch("/api/auth/logout",{method:"POST",credentials:"same-origin"});
+     if(!response.ok)throw new Error("Sign-out failed");
+     closeMenu();
+     router.replace("/admin/login");
+     router.refresh();
+   }catch{
+     setLogoutError("Unable to sign out. Please try again.");
+   }finally{setLogoutBusy(false);}
+ }
+
+ return <div className="min-h-dvh bg-[#f5f7fb] lg:flex">
+   <aside className="sticky top-0 hidden h-dvh w-[254px] shrink-0 overflow-hidden bg-[#061a36] px-5 py-6 text-white lg:block">
+     <AdminSidebar pathname={pathname} onNavigate={closeMenu} onLogout={()=>void logout()} logoutBusy={logoutBusy}/>
+   </aside>
+   <div className="min-w-0 flex-1">
+     <AdminTopbar pathname={pathname} name={user.name} role={user.role}
+       onOpenMenu={openMenu} onLogout={()=>void logout()} logoutBusy={logoutBusy} logoutError={logoutError}/>
+     <main id="main-content" className="mx-auto max-w-[1580px] px-4 py-7 sm:px-6 sm:py-8 lg:px-7 xl:px-9 xl:py-10">
+       {children}
+     </main>
+   </div>
+   <dialog ref={dialogRef} aria-label="Admin navigation"
+     className="admin-mobile-drawer fixed inset-0 m-0 h-dvh max-h-none w-screen max-w-none border-0 bg-transparent p-0 text-white lg:hidden"
+     onClick={event=>{if(event.target===event.currentTarget)closeMenu();}}>
+     <div className="admin-mobile-panel h-dvh w-[min(86vw,290px)] overflow-y-auto bg-[#061a36] px-5 py-6 shadow-[15px_0_45px_rgba(0,0,0,.2)]">
+       <AdminSidebar mobile pathname={pathname} onNavigate={closeMenu}
+         onLogout={()=>void logout()} logoutBusy={logoutBusy}/>
+       {logoutError&&<p role="alert" className="mt-2 rounded-lg bg-red-900/30 p-2 text-[11px] text-red-100">{logoutError}</p>}
+     </div>
+   </dialog>
+ </div>;
 }

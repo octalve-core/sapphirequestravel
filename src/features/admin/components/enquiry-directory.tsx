@@ -55,6 +55,62 @@ function DocumentIcon({status}:{status:string}){
  * A semantic desktop table becomes compact mobile cards without horizontal scrolling.
  * Search, filters, status tabs, export and pagination retain server-side URL state.
  */
+/** Shared record layout for the full directories and the overview preview.
+ * Every row is server-supplied and links to its actual authorised detail page.
+ */
+export function EnquiryRecords({rows,statuses,columns,emptyMessage,title,total}:{
+ rows:DirectoryRecord[];statuses:DirectoryStatus[];
+ columns:{detail:string;travelDate:string};emptyMessage:string;title:string;total:number;
+}){
+ return <>
+     {/* The full semantic grid is kept for desktops, while mobile uses the same data as cards. */}
+     <div className="hidden overflow-x-auto px-3 pb-3 pt-2 xl:block">
+       <table className="w-full min-w-[930px] border-separate border-spacing-y-2 text-left text-[12px] text-[#53647e]">
+         <caption className="sr-only">{title}. Showing {rows.length} of {total} matching enquiries.</caption>
+         <thead><tr className="bg-[#f2f3f6] text-[11px] text-[#728099]">
+           {["","Reference","Customer",columns.detail,columns.travelDate,"Received","Email","Status",""].map((head,i)=>
+             <th key={i} scope="col" className="whitespace-nowrap px-3 py-3 font-medium first:rounded-l-lg last:rounded-r-lg">{head||<span className="sr-only">{i===0?"Type":"Open"}</span>}</th>)}
+         </tr></thead>
+         <tbody>
+           {rows.map(item=><tr key={item.id} className="bg-[#f8f8f9] transition-colors hover:bg-[#f0f5fd]">
+             <td className="rounded-l-xl px-3 py-2"><DocumentIcon status={item.status}/></td>
+             <th scope="row" className="max-w-[155px] break-all px-3 py-3 text-left text-[12px] font-medium text-sapphire"><Link href={item.href} className="hover:underline">{item.reference}</Link></th>
+             <td className="max-w-[180px] px-3 py-3 font-medium text-navy"><span className="break-words">{item.name}</span></td>
+             <td className="max-w-[230px] px-3 py-3"><p className="break-words text-[12px] text-[#344967]">{item.detail}</p>{item.detailSecondary&&<p className="mt-1 truncate text-[10px] text-[#8996a8]">{item.detailSecondary}</p>}</td>
+             <td className="whitespace-nowrap px-3 py-3">{date(item.travelDate)}</td>
+             <td className="whitespace-nowrap px-3 py-3">{date(item.createdAt)}</td>
+             <td className="max-w-[190px] truncate px-3 py-3 text-[11px]">{item.email}</td>
+             <td className="px-3 py-3"><Status value={item.status} statuses={statuses}/></td>
+             <td className="rounded-r-xl px-3 py-3"><Link href={item.href} aria-label={"Open enquiry "+item.reference} className="inline-flex size-9 items-center justify-center rounded-lg text-[#7d8ca1] hover:bg-white hover:text-sapphire"><MoreVertical size={17} aria-hidden="true"/></Link></td>
+           </tr>)}
+         </tbody>
+       </table>
+     </div>
+     <div className="grid gap-2.5 px-3 py-3 xl:hidden">
+       {rows.map(item=><Link key={item.id} href={item.href} aria-label={"Open "+item.reference+" for "+item.name}
+         className="flex min-h-[105px] min-w-0 items-center gap-3 rounded-[15px] bg-[#f8f8f9] px-3 py-3 transition-colors hover:bg-[#f0f5fd] focus-visible:outline-2 focus-visible:outline-sapphire">
+         <DocumentIcon status={item.status}/>
+         <div className="min-w-0 flex-1">
+           <div className="flex flex-wrap items-start justify-between gap-x-2 gap-y-1">
+             <p className="min-w-0 break-words text-[12px] font-medium text-[#0b294e]">{item.name}</p>
+             <Status value={item.status} statuses={statuses}/>
+           </div>
+           <div className="mt-1.5 flex flex-wrap items-center gap-x-3 gap-y-1">
+             <span className="max-w-full break-all rounded-full bg-white px-2 py-1 text-[10px] text-[#71819b]">{item.reference}</span>
+             <span className="truncate text-[11px] text-[#52647d]">{item.detail}</span>
+           </div>
+           <div className="mt-2 flex flex-wrap gap-x-3 gap-y-1 text-[10px] text-[#8897a9]">
+             <span>Created: {date(item.createdAt)}</span>
+             <span>{columns.travelDate}: {date(item.travelDate)}</span>
+           </div>
+         </div>
+         <MoreVertical size={17} aria-hidden="true" className="shrink-0 text-[#91a0b3]"/>
+       </Link>)}
+     </div>
+     {!rows.length&&<p className="px-6 py-14 text-center text-[13px] text-muted">{emptyMessage}</p>}
+ </>;
+}
+
 export function EnquiryDirectory({title,description,eyebrow,path,rows,total,page,pageSize,statuses,active,filterFields,columns,exportHref,error,emptyMessage}:Props){
  const activeStatus=active.status||"all";
  const totalPages=Math.max(1,Math.ceil(total/pageSize));
@@ -108,51 +164,7 @@ export function EnquiryDirectory({title,description,eyebrow,path,rows,total,page
          </a>}
        </div>
      </div>
-     {/* The full semantic grid is kept for desktops, while mobile uses the same data as cards. */}
-     <div className="hidden overflow-x-auto px-3 pb-3 pt-2 xl:block">
-       <table className="w-full min-w-[930px] border-separate border-spacing-y-2 text-left text-[12px] text-[#53647e]">
-         <caption className="sr-only">{title}. Showing {rows.length} of {total} matching enquiries.</caption>
-         <thead><tr className="bg-[#f2f3f6] text-[11px] text-[#728099]">
-           {["","Reference","Customer",columns.detail,columns.travelDate,"Received","Email","Status",""].map((head,i)=>
-             <th key={i} scope="col" className="whitespace-nowrap px-3 py-3 font-medium first:rounded-l-lg last:rounded-r-lg">{head||<span className="sr-only">{i===0?"Type":"Open"}</span>}</th>)}
-         </tr></thead>
-         <tbody>
-           {rows.map(item=><tr key={item.id} className="bg-[#f8f8f9] transition-colors hover:bg-[#f0f5fd]">
-             <td className="rounded-l-xl px-3 py-2"><DocumentIcon status={item.status}/></td>
-             <th scope="row" className="max-w-[155px] break-all px-3 py-3 text-left text-[12px] font-medium text-sapphire"><Link href={item.href} className="hover:underline">{item.reference}</Link></th>
-             <td className="max-w-[180px] px-3 py-3 font-medium text-navy"><span className="break-words">{item.name}</span></td>
-             <td className="max-w-[230px] px-3 py-3"><p className="break-words text-[12px] text-[#344967]">{item.detail}</p>{item.detailSecondary&&<p className="mt-1 truncate text-[10px] text-[#8996a8]">{item.detailSecondary}</p>}</td>
-             <td className="whitespace-nowrap px-3 py-3">{date(item.travelDate)}</td>
-             <td className="whitespace-nowrap px-3 py-3">{date(item.createdAt)}</td>
-             <td className="max-w-[190px] truncate px-3 py-3 text-[11px]">{item.email}</td>
-             <td className="px-3 py-3"><Status value={item.status} statuses={statuses}/></td>
-             <td className="rounded-r-xl px-3 py-3"><Link href={item.href} aria-label={"Open enquiry "+item.reference} className="inline-flex size-9 items-center justify-center rounded-lg text-[#7d8ca1] hover:bg-white hover:text-sapphire"><MoreVertical size={17} aria-hidden="true"/></Link></td>
-           </tr>)}
-         </tbody>
-       </table>
-     </div>
-     <div className="grid gap-2.5 px-3 py-3 xl:hidden">
-       {rows.map(item=><Link key={item.id} href={item.href} aria-label={"Open "+item.reference+" for "+item.name}
-         className="flex min-h-[105px] min-w-0 items-center gap-3 rounded-[15px] bg-[#f8f8f9] px-3 py-3 transition-colors hover:bg-[#f0f5fd] focus-visible:outline-2 focus-visible:outline-sapphire">
-         <DocumentIcon status={item.status}/>
-         <div className="min-w-0 flex-1">
-           <div className="flex flex-wrap items-start justify-between gap-x-2 gap-y-1">
-             <p className="min-w-0 break-words text-[12px] font-medium text-[#0b294e]">{item.name}</p>
-             <Status value={item.status} statuses={statuses}/>
-           </div>
-           <div className="mt-1.5 flex flex-wrap items-center gap-x-3 gap-y-1">
-             <span className="max-w-full break-all rounded-full bg-white px-2 py-1 text-[10px] text-[#71819b]">{item.reference}</span>
-             <span className="truncate text-[11px] text-[#52647d]">{item.detail}</span>
-           </div>
-           <div className="mt-2 flex flex-wrap gap-x-3 gap-y-1 text-[10px] text-[#8897a9]">
-             <span>Created: {date(item.createdAt)}</span>
-             <span>{columns.travelDate}: {date(item.travelDate)}</span>
-           </div>
-         </div>
-         <MoreVertical size={17} aria-hidden="true" className="shrink-0 text-[#91a0b3]"/>
-       </Link>)}
-     </div>
-     {!rows.length&&<p className="px-6 py-14 text-center text-[13px] text-muted">{emptyMessage}</p>}
+     <EnquiryRecords rows={rows} statuses={statuses} columns={columns} emptyMessage={emptyMessage} title={title} total={total}/>
      <div className="flex items-center justify-between gap-2 border-t border-[#e9edf3] px-4 py-4 sm:px-6">
        <Link href={url(path,active,{page:String(Math.max(1,page-1))})}
          aria-disabled={page<=1} tabIndex={page<=1?-1:undefined}

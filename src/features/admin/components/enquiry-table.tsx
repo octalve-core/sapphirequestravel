@@ -1,5 +1,43 @@
-import Link from "next/link";
-import { ArrowUpRight } from "lucide-react";
-import { type EnquiryRow } from "@/server/admin-data";
-import { StatusBadge } from "@/features/admin/components/status-badge";
-export function EnquiryTable({rows}:{rows:EnquiryRow[]}){return <div className="surface-card overflow-x-auto"><table className="w-full min-w-[740px] text-left text-sm"><thead className="bg-[#fafbfd] text-[11px] font-semibold uppercase tracking-[.1em] text-[#748196]"><tr><th className="p-5">Reference / customer</th><th className="p-5">Service</th><th className="p-5">Status</th><th className="p-5">Received</th><th className="p-5">View</th></tr></thead><tbody className="divide-y divide-[#eef1f6]">{rows.map(r=><tr key={r.id} className="transition-colors hover:bg-[#f9fbfe]"><td className="p-5"><p className="font-semibold text-navy">{r.reference}</p><p className="mt-1 text-xs text-muted">{r.name}</p></td><td className="p-5 capitalize text-[#4a5970]">{r.service}</td><td className="p-5"><StatusBadge status={r.status}/></td><td className="p-5 text-xs text-muted">{new Date(r.created_at).toLocaleDateString("en-NG",{year:"numeric",month:"short",day:"numeric"})}</td><td className="p-5"><Link className="inline-flex items-center gap-1 font-semibold text-sapphire" href={`/admin/enquiries/${r.id}`}>Open <ArrowUpRight size={15}/></Link></td></tr>)}</tbody></table>{rows.length===0&&<p className="p-10 text-center text-sm text-muted">No enquiries to display yet.</p>}</div>}
+import type { EnquiryRow } from "@/server/admin-data";
+import { describeAirport } from "@/server/airport-lookup";
+import { EnquiryRecords, type DirectoryRecord } from "@/features/admin/components/enquiry-directory";
+
+const statuses=[
+ {value:"new",label:"New"},
+ {value:"reviewing",label:"Reviewing"},
+ {value:"quoted",label:"Quoted"},
+ {value:"awaiting_customer",label:"Awaiting customer"},
+ {value:"confirmed",label:"Confirmed"},
+ {value:"closed",label:"Closed"},
+];
+
+const serviceNames:Record<string,string>={
+ flight:"Flight",corporate:"Corporate travel",visa:"Visa assistance",holiday:"Tour",
+};
+
+/** The overview uses the SAME desktop rows and mobile cards as the full enquiry directories. */
+export function EnquiryTable({rows}:{rows:EnquiryRow[]}){
+ const records:DirectoryRecord[]=rows.map(row=>{
+   let detail=serviceNames[row.service]||row.service;
+   if(row.service==="flight" && row.origin && row.destination){
+     detail+=" · "+describeAirport(row.origin)+" → "+describeAirport(row.destination);
+   }else if(row.service==="corporate"){
+     const location=row.notes?.split("\n").find(line=>line.startsWith("Destination city: "))?.slice("Destination city: ".length);
+     if(location)detail+=" · "+location;
+     else if(row.destination)detail+=" · "+describeAirport(row.destination);
+   }else if(row.destination){
+     detail+=" · "+describeAirport(row.destination);
+   }
+   return {
+     id:row.id,href:"/admin/enquiries/"+row.id,reference:row.reference,
+     name:row.name,email:row.email,detail,
+     createdAt:row.created_at,travelDate:row.departure_date,
+     status:row.status,travellers:row.travellers,
+   };
+ });
+ return <EnquiryRecords
+   title="Recent general enquiries" total={records.length} rows={records}
+   statuses={statuses} columns={{detail:"Service / destination",travelDate:"Travel date"}}
+   emptyMessage="No recent general travel enquiries yet."
+ />;
+}
