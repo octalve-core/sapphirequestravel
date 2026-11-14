@@ -81,3 +81,19 @@ textarea.booking-input { min-height:88px; padding-block:12px; }
   body:has(.enquiry-detail-print) #main-content { max-width:none!important; padding:0!important; margin:0!important; }
   body:has(.enquiry-detail-print) .enquiry-detail-print section { box-shadow:none!important; break-inside:avoid; }
 }
+
+/* Staff navigation drawer uses a native modal: Escape and focus containment are browser-managed. */
+.admin-mobile-drawer::backdrop {
+  background: rgba(4, 16, 37, .60);
+  backdrop-filter: blur(3px);
+}
+.admin-mobile-panel {
+  transform: translateX(0);
+  transition: transform .25s cubic-bezier(.2,.8,.2,1);
+}
+@starting-style {
+  .admin-mobile-drawer[open] .admin-mobile-panel { transform: translateX(-100%); }
+}
+@media (prefers-reduced-motion: reduce) {
+  .admin-mobile-panel { transition: none; }
+}

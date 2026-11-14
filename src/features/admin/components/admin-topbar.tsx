@@ -16,12 +16,14 @@ function initials(name:string):string{
 }
 function HeaderSearch({scope,setScope,id}:{scope:Scope;setScope:(v:Scope)=>void;id:string}){
  return <form method="GET" action={scope} role="search" aria-label="Search staff enquiries"
-   className="flex min-w-0 items-center gap-1.5 rounded-[13px] border border-[#dce4ef] bg-[#fbfcfe] p-1.5 shadow-[0_2px_4px_rgba(7,28,59,.035)] focus-within:border-[#a3c4fb]">
-   <Search size={17} className="ml-2 shrink-0 text-[#6b7e99]" aria-hidden="true"/>
-   <label htmlFor={id} className="sr-only">Search enquiries</label>
-   <input id={id} name="q" type="search" maxLength={100} autoComplete="off"
-     placeholder="Search enquiries, customers, references..."
-     className="h-9 min-w-0 flex-1 bg-transparent px-1 text-[12px] font-normal text-navy outline-none placeholder:text-[#8998ad]"/>
+   className="flex min-w-0 flex-wrap items-center gap-1.5 rounded-[13px] border border-[#dce4ef] bg-[#fbfcfe] p-1.5 shadow-[0_2px_4px_rgba(7,28,59,.035)] focus-within:border-[#a3c4fb]">
+   <div className="flex min-w-[165px] flex-1 items-center gap-1">
+     <Search size={17} className="ml-2 shrink-0 text-[#6b7e99]" aria-hidden="true"/>
+     <label htmlFor={id} className="sr-only">Search enquiries</label>
+     <input id={id} name="q" type="search" maxLength={100} autoComplete="off"
+       placeholder="Search enquiries, customers, references..."
+       className="h-9 min-w-0 flex-1 bg-transparent px-1 text-[12px] font-normal text-navy outline-none placeholder:text-[#8998ad]"/>
+   </div>
    <label htmlFor={id+"-scope"} className="sr-only">Search which directory</label>
    <select id={id+"-scope"} value={scope} onChange={event=>setScope(event.target.value as Scope)}
      className="h-9 max-w-[108px] shrink-0 rounded-lg border border-[#e5eaf2] bg-white px-2 text-[11px] font-medium text-[#445b7b] focus-visible:outline-sapphire">
