@@ -1,10 +1,9 @@
 import Link from "next/link";
 import {
-  Activity, ArrowDownRight, ArrowUpRight, BarChart3, CalendarDays,
-  CircleCheck, Clock3, FileDown, Globe2, Inbox, Layers3,
+  Activity, ArrowDownRight, ArrowUpRight, CalendarDays,
+  CircleCheck, Clock3, FileDown, Inbox, Layers3,
   MailCheck, PackageCheck, UsersRound, UserRoundSearch,
 } from "lucide-react";
-import type { ReactNode } from "react";
 import type { ReportData, TrendPoint, CategoryCount } from "@/server/report-data";
 
 const n=(value:number)=>value.toLocaleString("en-NG");
@@ -182,18 +181,26 @@ export function ReportDashboard({report:r}:{report:ReportData}){
    <PanelHeading title="Operational attention" description="Practical next actions supported by current request statuses"/>
    <div className="grid gap-3 sm:grid-cols-3">
     {[
-     {label:"New enquiries",value:s.newCount,description:"Check requests not yet moved beyond New.",href:"/admin/enquiries?status=new"},
-     {label:"Unassigned open requests",value:s.unassigned,description:"Assign an owner across General, Package and Visa queues.",href:"/admin/enquiries"},
-     {label:"New for over 48 hours",value:s.unreviewed48,description:"Prioritise older new submissions across the three queues.",href:"/admin/enquiries?status=new"},
+     {label:"New enquiries",value:s.newCount,description:"Check requests not yet moved beyond New.",status:"new"},
+     {label:"Unassigned open requests",value:s.unassigned,description:"Assign an owner across the three queues.",status:""},
+     {label:"New for over 48 hours",value:s.unreviewed48,description:"Prioritise older New submissions.",status:"new"},
     ].map(item=><div key={item.label} className="rounded-xl border border-[#e4eaf3] bg-[#f8faff] p-4">
       <div className="flex items-center justify-between gap-2">
        <span className="text-[12px] font-medium text-[#3d5878]">{item.label}</span>
        <span className="text-[22px] font-medium tabular-nums text-navy">{n(item.value)}</span>
       </div>
       <p className="mt-2 text-[11px] leading-5 text-[#73839a]">{item.description}</p>
-      <Link href={item.href} className="mt-3 inline-flex min-h-8 items-center gap-1.5 text-[11px] font-medium text-sapphire hover:underline">
-       Open worklist <ArrowUpRight size={13} aria-hidden="true"/>
-      </Link>
+      <div className="mt-3 flex flex-wrap items-center gap-x-3 gap-y-1">
+       {[
+        {label:"General",href:"/admin/enquiries"},
+        {label:"Packages",href:"/admin/package-enquiries"},
+        {label:"Visa",href:"/admin/visa-enquiries"},
+       ].map(queue=><Link key={queue.label}
+         href={queue.href+(item.status?"?status="+item.status:"")}
+         className="inline-flex min-h-8 items-center gap-1 text-[11px] font-medium text-sapphire hover:underline">
+         {queue.label}<ArrowUpRight size={12} aria-hidden="true"/>
+       </Link>)}
+      </div>
     </div>)}
    </div>
   </section>
