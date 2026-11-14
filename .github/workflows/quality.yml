@@ -26,6 +26,8 @@ jobs:
         run: pnpm exec tsx scripts/check-flight-enquiries.ts
       - name: Validate enquiry itinerary detail parsing
         run: pnpm exec tsx scripts/check-enquiry-itinerary.ts
+      - name: Validate reporting periods and trend aggregates
+        run: pnpm exec tsx scripts/check-report-math.ts
       - name: Validate transactional email templates
         run: pnpm exec tsx scripts/check-email-templates.ts
       - name: Validate first-owner bootstrap without credentials
