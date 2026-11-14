@@ -19,7 +19,7 @@ export const searchScopes=[
 ] as const;
 
 export function currentAdminSection(path:string){
- const items=adminNavigation.flatMap(section=>section.items);
+ const items=[...adminNavigation[0].items,...adminNavigation[1].items];
  const match=items.filter(item=>path===item.href||(item.href!=="/admin"&&path.startsWith(item.href+"/")))
    .sort((a,b)=>b.href.length-a.href.length)[0]||items[0];
  const isDetail=path!==match.href;
