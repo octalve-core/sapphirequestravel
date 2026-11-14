@@ -85,5 +85,5 @@ test("package enquiry status/assignment/note mutations have auth, provenance and
   assert.match(api, /packageEnquiryChangeSchema/);
   assert.match(api, /package_enquiry_events/);
   assert.match(api, /audit_events/);
-  assert.match(read("src/features/admin/components/admin-shell.tsx"), /\/admin\/package-enquiries/);
+  assert.match(read("src/features/admin/lib/admin-navigation.ts"), /\/admin\/package-enquiries/);
 });
