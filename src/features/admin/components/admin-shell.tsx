@@ -11,13 +11,13 @@ import { AdminTopbar } from "@/features/admin/components/admin-topbar";
 
 type StaffDisplay={name:string;role:string};
 
-function AdminSidebar({pathname,onNavigate,onLogout,logoutBusy,mobile}:{
- pathname:string;onNavigate:()=>void;onLogout:()=>void;logoutBusy:boolean;mobile?:boolean;
+function AdminSidebar({pathname,role,onNavigate,onLogout,logoutBusy,mobile}:{
+ pathname:string;role:string;onNavigate:()=>void;onLogout:()=>void;logoutBusy:boolean;mobile?:boolean;
 }){
  return <div className="flex h-full min-h-0 flex-col">
    <div className="flex items-start justify-between gap-2 border-b border-white/10 pb-6">
      <div className="min-w-0">
-       <BrandMark inverse href="/admin"/>
+       <div className="px-3 py-3"><BrandMark inverse compact href="/admin"/></div>
        <p className="mt-4 px-1 text-[10px] font-medium uppercase tracking-[.18em] text-[#9eb8d9]">Team workspace</p>
      </div>
      {mobile&&<button type="button" onClick={onNavigate} aria-label="Close navigation menu"
@@ -30,7 +30,7 @@ function AdminSidebar({pathname,onNavigate,onLogout,logoutBusy,mobile}:{
      {adminNavigation.map(section=><div key={section.title}>
        <p className="mb-2 px-3 text-[10px] font-medium uppercase tracking-[.15em] text-[#829dc2]">{section.title}</p>
        <div className="space-y-1">
-         {section.items.map(item=>{
+         {section.items.filter(item=>item.href!=="/admin/reports"||role==="owner"||role==="manager").map(item=>{
            const Icon=item.icon;
            const active=pathname===item.href||(item.href!=="/admin"&&pathname.startsWith(item.href+"/"));
            return <Link key={item.href} href={item.href} onClick={onNavigate}
@@ -95,7 +95,7 @@ export function AdminShell({children,user}:{children:React.ReactNode;user:StaffD
 
  return <div className="min-h-dvh bg-[#f5f7fb] lg:flex">
    <aside className="sticky top-0 hidden h-dvh w-[254px] shrink-0 overflow-hidden bg-[#061a36] px-5 py-6 text-white lg:block">
-     <AdminSidebar pathname={pathname} onNavigate={closeMenu} onLogout={()=>void logout()} logoutBusy={logoutBusy}/>
+     <AdminSidebar role={user.role} pathname={pathname} onNavigate={closeMenu} onLogout={()=>void logout()} logoutBusy={logoutBusy}/>
    </aside>
    <div className="min-w-0 flex-1">
      <AdminTopbar pathname={pathname} name={user.name} role={user.role}
@@ -108,7 +108,7 @@ export function AdminShell({children,user}:{children:React.ReactNode;user:StaffD
      className="admin-mobile-drawer fixed inset-0 m-0 h-dvh max-h-none w-screen max-w-none border-0 bg-transparent p-0 text-white lg:hidden"
      onClick={event=>{if(event.target===event.currentTarget)closeMenu();}}>
      <div className="admin-mobile-panel h-dvh w-[min(86vw,290px)] overflow-y-auto bg-[#061a36] px-5 py-6 shadow-[15px_0_45px_rgba(0,0,0,.2)]">
-       <AdminSidebar mobile pathname={pathname} onNavigate={closeMenu}
+       <AdminSidebar mobile role={user.role} pathname={pathname} onNavigate={closeMenu}
          onLogout={()=>void logout()} logoutBusy={logoutBusy}/>
        {logoutError&&<p role="alert" className="mt-2 rounded-lg bg-red-900/30 p-2 text-[11px] text-red-100">{logoutError}</p>}
      </div>

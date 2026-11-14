@@ -15,8 +15,8 @@ export function BrandMark({ inverse = false, compact = false, href = "/" }: { in
         width={inverse ? 2048 : 594}
         height={inverse ? 906 : 264}
         priority={!inverse}
-        sizes={inverse ? "(max-width: 640px) 174px, 220px" : compact ? "(max-width: 640px) 90px, 116px" : "(max-width: 640px) 150px, 194px"}
-        className={inverse ? "h-auto w-[174px] object-contain sm:w-[220px]" : compact ? "h-auto w-[90px] object-contain sm:w-[116px]" : "h-auto w-[150px] object-contain sm:w-[194px]"}
+        sizes={inverse ? (compact ? "(max-width: 640px) 105px, 132px" : "(max-width: 640px) 174px, 220px") : compact ? "(max-width: 640px) 90px, 116px" : "(max-width: 640px) 150px, 194px"}
+        className={inverse ? (compact ? "h-auto w-[105px] object-contain sm:w-[132px]" : "h-auto w-[174px] object-contain sm:w-[220px]") : compact ? "h-auto w-[90px] object-contain sm:w-[116px]" : "h-auto w-[150px] object-contain sm:w-[194px]"}
       />
     </Link>
   );
