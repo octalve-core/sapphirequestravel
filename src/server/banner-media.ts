@@ -105,7 +105,7 @@ export async function publishedBanner(): Promise<PublicBanner | null> {
   try {
     const candidates = await listManagedBanners({ publicCache: true });
     const item = candidates.find((banner) => banner.published);
-    return item ? { fileId: item.fileId, imageUrl: item.imageUrl, title: item.title, href: item.href } : null;
+    return item ? { fileId: item.fileId, imageUrl: item.imageUrl, title: item.title, href: item.href, width: item.width, height: item.height } : null;
   } catch {
     // A temporary ImageKit outage must not stop the homepage rendering.
     return null;

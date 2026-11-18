@@ -29,4 +29,4 @@ export type ManagedBanner = {
   height: number | null;
 };
 
-export type PublicBanner = Pick<ManagedBanner, "fileId" | "imageUrl" | "title" | "href">;
+export type PublicBanner = Pick<ManagedBanner, "fileId" | "imageUrl" | "title" | "href" | "width" | "height">;

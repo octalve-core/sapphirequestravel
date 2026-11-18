@@ -11,7 +11,7 @@ import {
 
 type JsonError = { error?: string };
 type UploadAuth = JsonError & { token: string; expire: number; signature: string; publicKey: string };
-type UploadResult = JsonError & { fileId?: string; filePath?: string; name?: string; url?: string; width?: number; height?: number };
+type UploadResult = JsonError & { message?: string; fileId?: string; filePath?: string; name?: string; url?: string; width?: number; height?: number };
 type BannerAction = "save" | "publish" | "unpublish";
 
 function BannerCard({
