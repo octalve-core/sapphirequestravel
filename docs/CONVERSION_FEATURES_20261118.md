@@ -1,35 +1,32 @@
-# Sapphire Quest public conversion and admin campaign controls
-Updated 18 November 2026
+# Sapphire Quest conversions, campaign scheduling, media editor
+Updated November 18, 2026
 
-This release includes floating WhatsApp chat, native sharing and WhatsApp sharing on package cards, verified-source visa guidance and FAQs, and the accuracy correction for unsupported Lagos departures. The travel promotion popup is now fully managed from ImageKit.
+## Public marketing
+- Floating WhatsApp support, package share links, and visa guidance linked to official sources remain unchanged.
+- The promotional popup is available across the existing public MarketingLayout, never on admin pages.
+- The popup requests a banner eligible for the visitor's current route. Only the selected public routes are eligible.
+- Popup time settings: page delay 0/3/5/10/15/30 seconds; campaign start and expiry in West Africa Time (UTC+1); once per browser session per ImageKit file. Images preserve native aspect ratio; on mobile the dialog scrolls if required.
+- Published, within time range, targeted to the page is required to display. Images missing/expired/unpublished or provider failure never block the public website.
+- Multiple published campaigns can coexist (for instance one on Visa and another on Packages). On overlap, the most recently updated eligible campaign is selected. The banner button destination is separately configurable from pages displayed.
 
-## Admin promotional banners
+## Admin: /admin/banners (owner/manager only)
+- Upload brand artwork to ImageKit's private admin account, website-unpublished initially. Do not confuse this with making the ImageKit image URL private.
+- Preview, edit image description, CTA destination, one or more public page targets, start/end schedule in WAT, display delay and publish/unpublish.
+- "Replace image": upload a NEW file with the current card settings as an unpublished draft. The previous image and current published campaign stay intact until the manager publishes the replacement. Delete the old file separately.
+- "Delete image": a separate button requiring browser confirmation; authenticated, same-origin API validates that the file is a regular image in /sapphirequest/banners/ before permanent ImageKit DELETE. This is irreversible.
+- Settings stored as ImageKit media tags; no new Neon migrations or new environment keys. Existing banner lacking config tags defaults to Homepage, no date limit and a 3-second delay. Existing user-uploaded images can be edited.
+- ImageKit API key must have Media Library read/write rights. Metadata indexing and server cache may briefly delay publication updates (public media cache revalidates within ~15 seconds). Concurrent staff changes can overwrite each other; avoid editing the same campaign simultaneously.
 
-Manager and owner route: /admin/banners, linked in the existing sidebar. Staff can:
-1. Upload JPG, PNG, or WebP up to 5 MB, using the same signed /api/admin/media/auth endpoint as packages. Landscape 16:9 is recommended. The ImageKit folder is /sapphirequest/banners/.
-2. Change the image description (used as image alternative text) and choose a click-through destination from approved internal pages.
-3. Publish or unpublish the banner. Publishing a new one removes the previous campaign's active status.
-4. Refresh the banner library. ImageKit search index updates may lag behind writes for a short time.
+## Package media editor
+- Each existing gallery image supports Replace (upload a new asset), Remove (detach from the package), Make package cover, and order arrows.
+- Separate optional homepage-card image upload is available; "Use gallery cover" clears the override.
+- All changes are drafts until Save package changes is submitted to the existing package API. The public package card uses the first gallery image; a separate homepage override can be used.
+- Package removal deliberately DOES NOT delete the underlying ImageKit asset: a file may be shared by other pages or packages. Permanent deletion of referenced package files remains a separate media-cleanup concern. The user is informed in the editor.
+- No database schema migration or destructive change to package enquiries.
 
-Uploads are WEBSITE-UNPUBLISHED by default: their public ImageKit URLs may still be reachable directly, but the website does not display them in its popup unless their publication tag is active. This is not the ImageKit Enterprise feature for private draft assets. No file deletion occurs.
-
-No new Neon migrations or environment variable names are required. The existing Sapphire Quest ImageKit PUBLIC and PRIVATE API keys must be configured, and the private key needs media read/write privileges. Secrets remain server-only. Without working ImageKit configuration, the admin receives an actionable error and the public site stays functional without a popup.
-
-The public endpoint returns only the selected published banner URL, accessible description, size and approved internal destination. A 30-second backend media cache and provider metadata indexing can cause a short publication propagation delay. At most one popup is displayed; simultaneous publication by multiple administrators is not a supported workflow.
-
-The popup uses a native dialog, focus containment, Escape, backdrop click, once-per-session display, and a text-only fallback if an image is unavailable. No fabricated fares, booking inventory or discounts.
-
-## Release verification
-
+## Verification
 - CI: pnpm install --frozen-lockfile; pnpm run typecheck; pnpm run lint; pnpm test; pnpm run build.
-- Check owner/manager versus agent/viewer and direct unauthenticated API access.
-- Upload a genuine banner from admin and publish it. Check homepage, dismissal, subsequent visit, unpublish and new publication.
-- Verify 320px, 375px, 768px, 1440px layouts and that WhatsApp and mobile navigation do not obstruct the popup.
-- Check ImageKit outage behavior and official visa-information links.
-- Merge the reviewed feature branch only after CI. Manually deploy one approved production SHA. No database migration is required.
-
-## Fix: banners uploaded successfully but rejected at publication (18 Nov)
-
-The previous publication validation required the user-set ownership tag to be returned by ImageKit's immediate file details response. A new upload could be displayed correctly in the admin, then fail to publish with "This image is not a Sapphire Quest promotional banner" if that optional tag was not included in the response.
-
-The read/write eligibility check now uses the authoritative ImageKit file path under `/sapphirequest/banners/` and `fileType=image`, while retaining owner/manager authentication. Tags continue to encode the selected destination and published/unpublished state, and are written to the ImageKit file on Save or Publish. Existing uploads stay in place; no reupload or database migration is needed.
+- Manual checks: owner vs agent permission, invalid origin and invalid page/date, banner upload, publish, schedule start/end, browser-session frequency, replacement, deletion, multiple campaigns on separate pages, and verifying campaign doesn't appear in admin.
+- Package test: upload replacement, make cover, remove from package then save and check actual public URL, including homepage override.
+- Mobile checks at 320/375/768/1440px, keyboard focus and Escape; ImageKit outage behavior.
+- Merge after CI, then follow existing manual production-deployment policy using one main SHA.

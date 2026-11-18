@@ -15,7 +15,7 @@ test("floating WhatsApp widget is attached only to public layout and uses config
 });
 
 test("homepage promotion respects dismissal and avoids fake flight fares", () => {
-  assert.match(source("src/app/page.tsx"), /<TravelOfferPopup/);
+  assert.match(source("src/components/layout/marketing-layout.tsx"), /<TravelOfferPopup/);
   const promo = source("src/features/home/components/travel-offer-popup.tsx");
   assert.match(promo, /showModal/);
   assert.match(promo, /sessionStorage/);
