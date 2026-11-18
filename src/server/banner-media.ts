@@ -38,8 +38,9 @@ function fromImageKit(value: unknown): ManagedBanner | null {
   if (value.isPrivateFile === true || value.isPublished === false) return null;
   const url = safeImageUrl(value.url);
   if (!url || typeof value.fileId !== "string") return null;
+  // ImageKit may not return upload tags immediately (or an upload may arrive without tags).
+  // A staff-managed image in the dedicated folder is sufficient; tags control only publication.
   const tags = asTags(value.tags);
-  if (!tags.includes(BANNER_OWNER_TAG)) return null;
   const match = bannerDestinations.find((item) => tags.includes(bannerRouteTag(item.path)));
   const title = typeof value.description === "string" && value.description.trim().length
     ? value.description.trim().slice(0, 180)
@@ -114,9 +115,10 @@ export async function publishedBanner(): Promise<PublicBanner | null> {
 
 async function getBannerDetails(fileId: string): Promise<RawObject> {
   const raw = await imagekitRequest("/" + encodeURIComponent(fileId) + "/details");
-  if (!record(raw) || !inBannerFolder(raw.filePath) || raw.fileType !== "image" ||
-      !asTags(raw.tags).includes(BANNER_OWNER_TAG)) {
-    throw new BannerMediaError("This image is not a Sapphire Quest promotional banner.");
+  // Folder membership and image type are the authorization boundary, not an optional upload tag.
+  // This lets already-uploaded banners be published without requiring a second upload.
+  if (!record(raw) || !inBannerFolder(raw.filePath) || raw.fileType !== "image") {
+    throw new BannerMediaError("The selected image is not in the Sapphire Quest banner folder.");
   }
   return raw;
 }

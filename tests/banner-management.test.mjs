@@ -65,3 +65,13 @@ test("banners reuse ImageKit and do not depend on database migration", () => {
   assert.doesNotMatch(media, /@\/server\/db|INSERT INTO|UPDATE marketing_banners|DATABASE_URL/);
   assert.match(contract, /bannerDestinations/);
 });
+
+test("already-uploaded ImageKit banner can be published without an ownership tag", () => {
+  const media = read("src/server/banner-media.ts");
+  assert.match(media, /Folder membership and image type are the authorization boundary/);
+  assert.doesNotMatch(media, /if \(!tags\.includes\(BANNER_OWNER_TAG\)\) return null/);
+  assert.doesNotMatch(media, /!asTags\(raw\.tags\)\.includes\(BANNER_OWNER_TAG\)/);
+  assert.match(media, /inBannerFolder\(raw\.filePath\)/);
+  assert.match(media, /raw\.fileType !== "image"/);
+  assert.match(media, /BANNER_OWNER_TAG, bannerRouteTag\(input\.href\)/);
+});
