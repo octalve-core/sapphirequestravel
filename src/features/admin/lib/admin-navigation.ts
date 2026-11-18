@@ -1,4 +1,4 @@
-import { BarChart3, ClipboardList, FileCheck2, Inbox, LayoutDashboard, Package } from "lucide-react";
+import { BarChart3, ClipboardList, FileCheck2, Images, Inbox, LayoutDashboard, Package } from "lucide-react";
 
 export const adminNavigation = [
   {title:"Workspace", items:[
@@ -10,6 +10,7 @@ export const adminNavigation = [
   ]},
   {title:"Catalogue", items:[
     {label:"Packages",href:"/admin/packages",icon:Package},
+    {label:"Promotional banners",href:"/admin/banners",icon:Images},
   ]},
 ] as const;
 

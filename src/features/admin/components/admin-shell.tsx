@@ -30,7 +30,7 @@ function AdminSidebar({pathname,role,onNavigate,onLogout,logoutBusy,mobile}:{
      {adminNavigation.map(section=><div key={section.title}>
        <p className="mb-2 px-3 text-[10px] font-medium uppercase tracking-[.15em] text-[#829dc2]">{section.title}</p>
        <div className="space-y-1">
-         {section.items.filter(item=>item.href!=="/admin/reports"||role==="owner"||role==="manager").map(item=>{
+         {section.items.filter(item=>(item.href!=="/admin/reports"&&item.href!=="/admin/banners")||role==="owner"||role==="manager").map(item=>{
            const Icon=item.icon;
            const active=pathname===item.href||(item.href!=="/admin"&&pathname.startsWith(item.href+"/"));
            return <Link key={item.href} href={item.href} onClick={onNavigate}

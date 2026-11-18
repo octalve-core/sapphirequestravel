@@ -3,6 +3,7 @@ import { RichTextRenderer } from "@/features/packages/components/rich-text-rende
 import { PackageImage } from "@/features/packages/components/package-image";
 import { PackageQuoteForm } from "@/features/packages/components/package-quote-form";
 import { PackageRating } from "@/features/packages/components/package-rating";
+import { PackageShare } from "@/features/packages/components/package-share";
 import type { PackageRecord } from "@/server/package-schema";
 
 export function PackageDetails({ item }: { item: PackageRecord }) {
@@ -20,6 +21,7 @@ export function PackageDetails({ item }: { item: PackageRecord }) {
           </div>
           <div>
             <PackageRating score={item.ratingScore} count={item.ratingCount} source={item.ratingSource}/>
+            <PackageShare title={item.title} slug={item.slug}/>
             <h2 className="mt-4 text-2xl font-medium tracking-[-.035em] text-navy">The experience</h2>
             <p className="mt-3 text-sm leading-7 text-muted">{item.summary}</p>
           </div>
