@@ -6,5 +6,6 @@ import { Experience } from "@/features/home/sections/experience";
 import { Trust } from "@/features/home/sections/trust";
 import { FinalCTA } from "@/features/home/sections/final-cta";
 import { BookingPanel } from "@/features/home/sections/booking-panel";
+import { TravelOfferPopup } from "@/features/home/components/travel-offer-popup";
 export const dynamic = "force-dynamic";
-export default function Home(){return <MarketingLayout><Hero/><BookingPanel/><ServiceOverview/><DestinationShowcase/><Experience/><Trust/><FinalCTA/></MarketingLayout>}
+export default function Home(){return <MarketingLayout><Hero/><BookingPanel/><ServiceOverview/><DestinationShowcase/><Experience/><Trust/><FinalCTA/><TravelOfferPopup/></MarketingLayout>}

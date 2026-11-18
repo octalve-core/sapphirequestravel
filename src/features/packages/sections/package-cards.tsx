@@ -4,6 +4,7 @@ import { publicPackageCatalog } from "@/server/package-catalog";
 import { PackageRating } from "@/features/packages/components/package-rating";
 import { PackagePrice } from "@/features/packages/components/package-price";
 import { PackageImage } from "@/features/packages/components/package-image";
+import { PackageShare } from "@/features/packages/components/package-share";
 
 function daysAndNights(highlights: string) {
   const matched = highlights.match(/(\d+)\s+days?\s*[·/-]\s*(\d+)\s+nights?/i);
@@ -40,7 +41,7 @@ export async function PackageCards() {
                 </div>
                 <div className="mt-5 flex flex-wrap gap-x-5 gap-y-2 text-[11px] font-medium text-[#52657f]">
                   <span className="flex items-center gap-1.5"><CalendarDays size={14} aria-hidden="true"/>{daysAndNights(item.highlights)}</span>
-                  <span className="flex items-center gap-1.5"><Plane size={14} aria-hidden="true"/>Lagos departure</span>
+                  <span className="flex items-center gap-1.5"><Plane size={14} aria-hidden="true"/>Departure on enquiry</span>
                 </div>
                 <div className="mt-auto pt-6">
                   <div className="border-t border-[#e8edf4] pt-5">
@@ -55,6 +56,7 @@ export async function PackageCards() {
                       View trip <ArrowUpRight size={15} aria-hidden="true"/>
                     </Link>
                   </div>
+                  <PackageShare title={item.title} slug={item.slug} compact/>
                 </div>
               </div>
             </article>
