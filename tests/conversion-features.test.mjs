@@ -21,7 +21,8 @@ test("homepage promotion respects dismissal and avoids fake flight fares", () =>
   assert.match(promo, /sessionStorage/);
   assert.match(promo, /onError/);
   assert.match(promo, /aria-label="Close travel offer"/);
-  assert.match(promo, /\/request/);
+  assert.match(promo, /\/api\/public\/banner/);
+  assert.match(promo, /banner\.href/);
   assert.doesNotMatch(promo, /discountPercent|fakeFare|guaranteed discount/);
 });
 
