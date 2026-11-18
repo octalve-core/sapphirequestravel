@@ -1,7 +1,8 @@
 "use client";
 
 import { useState } from "react";
-import { Check, Copy, MessageCircle, Share2 } from "lucide-react";
+import { Check, Copy, Share2 } from "lucide-react";
+import { WhatsAppIcon } from "@/components/ui/whatsapp-icon";
 import { brand } from "@/config/brand";
 
 type Props = { title: string; slug: string; compact?: boolean };
@@ -43,7 +44,7 @@ export function PackageShare({ title, slug, compact = false }: Props) {
         </button>
         <a href={whatsappShare} target="_blank" rel="noopener noreferrer"
           className="inline-flex min-h-11 items-center gap-2 rounded-lg border border-[#cce6d7] bg-[#f4fbf7] px-3.5 text-[12px] font-medium text-[#126338] hover:bg-[#e9f7ef]">
-          <MessageCircle size={15} aria-hidden="true"/> WhatsApp
+          <WhatsAppIcon size={15}/> WhatsApp
         </a>
       </div>
       {feedback === "manual" && (

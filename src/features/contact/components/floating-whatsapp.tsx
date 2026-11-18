@@ -1,7 +1,8 @@
 "use client";
 
 import { useEffect, useRef, useState } from "react";
-import { ArrowUpRight, MessageCircle, X } from "lucide-react";
+import { ArrowUpRight, X } from "lucide-react";
+import { WhatsAppIcon } from "@/components/ui/whatsapp-icon";
 import { brand } from "@/config/brand";
 import { whatsappLink } from "@/lib/whatsapp-link";
 
@@ -38,7 +39,7 @@ export function FloatingWhatsApp() {
           className="mb-3 w-[min(340px,calc(100vw-2rem))] overflow-hidden rounded-[20px] border border-[#e6ebf2] bg-white text-navy shadow-[0_18px_65px_rgba(5,27,58,.25)]">
           <div className="flex items-center justify-between bg-[#075a36] px-5 py-4 text-white">
             <div className="flex items-center gap-2.5">
-              <MessageCircle size={19} aria-hidden="true"/>
+              <WhatsAppIcon size={19}/>
               <div>
                 <p className="text-[14px] font-medium">Sapphire Quest</p>
                 <p className="text-[11px] text-white/80">WhatsApp travel enquiries</p>
@@ -65,10 +66,10 @@ export function FloatingWhatsApp() {
       )}
       <button ref={trigger} type="button"
         aria-label={open ? "Close WhatsApp chat options" : "Chat with Sapphire Quest on WhatsApp"}
-        aria-controls="sapphire-whatsapp-panel" aria-expanded={open}
+        aria-controls={open ? "sapphire-whatsapp-panel" : undefined} aria-expanded={open}
         onClick={() => setOpen((current) => !current)}
         className="inline-flex min-h-[54px] items-center gap-2.5 rounded-full border border-white/20 bg-[#15834b] px-4 py-3 text-[13px] font-medium text-white shadow-[0_12px_35px_rgba(10,80,45,.28)] transition-colors hover:bg-[#116b3d] focus-visible:outline-[#15834b] focus-visible:outline-offset-4">
-        {open ? <X size={21} aria-hidden="true"/> : <MessageCircle size={23} aria-hidden="true"/>}
+        {open ? <X size={21} aria-hidden="true"/> : <WhatsAppIcon size={23}/>}
         <span>WhatsApp</span>
       </button>
     </div>
