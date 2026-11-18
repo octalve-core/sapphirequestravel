@@ -95,14 +95,14 @@ export function PackageFields({initial,id,onSaved}:{initial?:PackageInput;id?:st
       </label>
     </div>
     <p className="mt-4 text-[11px] leading-6 text-muted">
-      Your current homepage picture stays in place. To replace it, upload a new image
-      in Package photos below and place it first in the gallery. That image will automatically
-      become the homepage cover and standard package card image. The original file is preserved.
+      The homepage uses the first gallery image unless you set a separate homepage image URL.
+      Use the gallery controls below to replace, reorder or remove pictures. You can also upload
+      a dedicated homepage card picture, or select Use gallery cover. Save the package to apply changes.
     </p>
   </fieldset>
   <div><label className="label-field">Included features — one item per line</label><textarea className="input-field min-h-[130px] py-3" placeholder={"e.g. Flight coordination\nAccommodation guidance\nAirport transfers"} value={form.features.join("\n")} onChange={e=>update("features",e.target.value.split("\n").map(x=>x.trim()).filter(Boolean).slice(0,20))}/></div>
   <div><label className="label-field">Full package description</label><RichTextEditor key={editorReset} value={form.details} onChange={v=>setForm(p=>({...p,details:{...p.details,blocks:v.blocks}}))}/></div>
-  <div><label className="label-field">Package photos</label><PackageMedia images={form.images} onChange={v=>update("images",v)}/></div>
+  <div><label className="label-field">Package photos</label><PackageMedia images={form.images} onChange={v=>update("images",v)} homeImage={form.details.home?.image||""} onHomeImageChange={v=>updateHome("image",v)}/></div>
   {message&&<p role="status" className={`rounded-xl px-4 py-3 text-xs ${/error|unable|failed|check/i.test(message)?"bg-red-50 text-red-700":"bg-green-50 text-green-800"}`}>{message}</p>}
   <div className="flex flex-wrap items-center justify-between gap-3"><p className="text-[11px] text-muted">Saving does not book a flight or charge a customer.</p><Button disabled={busy} type="submit">{busy?"Saving...":<><Save size={16}/> {id?"Save package changes":"Create package"} <ArrowUpRight size={15}/></>}</Button></div>
  </form>;
