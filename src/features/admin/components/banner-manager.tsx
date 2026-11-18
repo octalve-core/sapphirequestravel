@@ -103,18 +103,15 @@ function BannerCard({
     }
   }
 
-  const now = Date.now();
-  const state = !banner.published ? "Unpublished"
-    : banner.startAt && Date.parse(banner.startAt) > now ? "Scheduled"
-    : banner.endAt && Date.parse(banner.endAt) <= now ? "Expired"
-    : "Published";
+  // Server filters the actual campaign schedule at request time.
+  const state = banner.published ? "Published · schedule applies" : "Unpublished";
 
   return (
     <article className="overflow-hidden rounded-2xl border border-[#e2eaf3] bg-white shadow-[0_12px_32px_-25px_rgba(7,28,59,.17)]">
       <div className="relative aspect-video overflow-hidden bg-[#eaf2ff]">
         <Image src={banner.imageUrl} alt={title} fill unoptimized sizes="(max-width: 768px) 100vw, 560px" className="object-contain"/>
         <span className={"absolute bottom-3 left-3 rounded-full px-3 py-1.5 text-[11px] font-medium shadow-sm " +
-          (state === "Published" ? "bg-[#e6f8ef] text-[#136a3e]" : "bg-white text-[#51627e]")}>{state}</span>
+          (banner.published ? "bg-[#e6f8ef] text-[#136a3e]" : "bg-white text-[#51627e]")}>{state}</span>
       </div>
 
       <div className="space-y-5 p-5 sm:p-6">
