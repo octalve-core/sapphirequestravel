@@ -27,3 +27,9 @@ The popup uses a native dialog, focus containment, Escape, backdrop click, once-
 - Verify 320px, 375px, 768px, 1440px layouts and that WhatsApp and mobile navigation do not obstruct the popup.
 - Check ImageKit outage behavior and official visa-information links.
 - Merge the reviewed feature branch only after CI. Manually deploy one approved production SHA. No database migration is required.
+
+## Fix: banners uploaded successfully but rejected at publication (18 Nov)
+
+The previous publication validation required the user-set ownership tag to be returned by ImageKit's immediate file details response. A new upload could be displayed correctly in the admin, then fail to publish with "This image is not a Sapphire Quest promotional banner" if that optional tag was not included in the response.
+
+The read/write eligibility check now uses the authoritative ImageKit file path under `/sapphirequest/banners/` and `fileType=image`, while retaining owner/manager authentication. Tags continue to encode the selected destination and published/unpublished state, and are written to the ImageKit file on Save or Publish. Existing uploads stay in place; no reupload or database migration is needed.
