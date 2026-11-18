@@ -37,8 +37,8 @@ export function PackageMedia({ images, onChange, homeImage, onHomeImageChange }:
     if (images.length >= 5) { setError("The package gallery supports up to five photographs."); return; }
     const candidate = url.trim();
     try {
-      const parsed = new URL(candidate);
-      if (parsed.protocol !== "https:" || !parsed.hostname) throw new Error();
+      const u = new URL(candidate);
+      if(u.protocol!=="https:" || !u.hostname) throw new Error();
       if (images.includes(candidate)) { setError("This photo is already in the gallery."); return; }
       onChange([...images, candidate]); setUrl("");
       setNotice("Image added to the gallery. Save package changes to publish it.");
